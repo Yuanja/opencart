@@ -206,7 +206,11 @@ class ControllerCommonMenu extends Controller {
 			'amazonus' => $this->config->get('openbay_amazonus_status'),
 			'etsy' => $this->config->get('etsy_status'),
 		);
-
+		
+		//Extension for parsing and syncing catalog
+		$data['catalog_refresh'] = $this->url->link('catalog/refresh', 'token=' . $this->session->data['token'], 'SSL');
+		$data['text_catalog_refresh'] = $this->language->get('text_catalog_refresh');
+		
 		return $this->load->view('common/menu.tpl', $data);
 	}
 }

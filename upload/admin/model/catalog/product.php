@@ -366,6 +366,10 @@ class ModelCatalogProduct extends Model {
 			$sql .= " AND p.status = '" . (int)$data['filter_status'] . "'";
 		}
 
+		if (isset($data['filter_web_item_number']) && !is_null($data['filter_web_item_number'])) {
+			$sql .= " AND p.sku = '" . (string)$data['filter_web_item_number'] . "'";
+		}
+		
 		$sql .= " GROUP BY p.product_id";
 
 		$sort_data = array(
