@@ -102,7 +102,12 @@ class ControllerCommonLogin extends Controller {
 
 	public function check() {
 		$route = isset($this->request->get['route']) ? $this->request->get['route'] : '';
-
+		
+		//Special case for refreshing catalog
+		if ($route == 'catalog/refresh'){
+			return;
+		}
+		
 		$ignore = array(
 			'common/login',
 			'common/forgotten',
