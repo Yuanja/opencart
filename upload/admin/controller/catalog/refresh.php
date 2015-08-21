@@ -53,15 +53,14 @@ class ControllerCatalogRefresh extends Controller {
 			$allCategoryIds = $this->getAllUniqueCategoryIds($changedRecordReg);
 			$allProductAttributes = $this->ensureAttributesAndGroups($changedRecordReg);
 			$allProductImages = $this->ensureImages($changedRecordReg);
-			$current_proudct = $changedRecordReg->get('current_product');
-			if($current_proudct){
-				$this->echoFlush("Merging product id: " + $current_proudct['']);
-				//merge and update
-				$this->mergeProductUpdate($current_proudct, $changedRecordReg);
-			} else {
-				//insert
-				$this->insertNewProduct($changedRecordReg, $allCategoryIds, $allProductAttributes, $allProductImages);
+			$current_product = $changedRecordReg->get('current_product');
+			if($current_product){
+				$this->echoFlush("Merging product id: ".$current_product['product_id']);
+				//delete
+				$this->load->model('catalog/product');
+				$this->model_catalog_proudct->deleteProduct($current_product['product_id']);
 			}
+			$this->insertNewProduct($changedRecordReg, $allCategoryIds, $allProductAttributes, $allProductImages);
 		}
 	}
 	
@@ -200,85 +199,20 @@ class ControllerCatalogRefresh extends Controller {
 	}
 	
 	private function getAllUniqueCategoryIds($changedRecordReg){
-		//Handle the make->model cats
-		$modelCategoryIds = array();
-		if (!empty($changedRecordReg->get('web_watch_model'))){
-			$modelCategoryIds = $this->ensureCategories(
-			 		$changedRecordReg->get('web_designer')
-					.CATEGORY_DELIMETER.$changedRecordReg->get('web_watch_model'));
-		} else {
-			$modelCategoryIds = $this->ensureCategories(
-					$changedRecordReg->get('web_designer')
-					.CATEGORY_DELIMETER."No model info");
-		}
+		$model = !empty($changedRecordReg->get('web_watch_model')) ? $changedRecordReg->get('web_watch_model') : "Unknown";
+		$sexType = !empty($changedRecordReg->get('web_watch_sex')) ? $changedRecordReg->get('web_watch_sex') : "Unisex";
+
+		//Create the make->model cats
+		$brandModelCategory = $this->ensureCategories(
+				$changedRecordReg->get('web_designer')
+				.CATEGORY_DELIMETER.$model);
+
+		//Create the watches->brand-sex-model category
+		$watchBrandSexModelCategory = $this->ensureCategories("Watches"
+				.CATEGORY_DELIMETER.$sexType
+				.CATEGORY_DELIMETER.$model);
 		
-		//Handle the make->ref cats
-		$refNumCategoryIds = array();
-		if (!empty($changedRecordReg->get('web_watch_manufacturer_reference_number'))){
-			$refNumCategoryIds = $this->ensureCategories('Refrence Number'
-					.CATEGORY_DELIMETER.$changedRecordReg->get('web_designer')
-					.CATEGORY_DELIMETER.$changedRecordReg->get('web_watch_manufacturer_reference_number'));
-		}
-		
-		//Handle the diameter
-		$diameterCategoryIds = array();
-		if (!empty($changedRecordReg->get('web_watch_diameter'))){
-			$diameterCategoryIds = $this->ensureCategories("Diameter"
-					.CATEGORY_DELIMETER.$changedRecordReg->get('web_watch_diameter'));
-		}
-		
-		//Handle the movement
-		$movementCategoryIds = array();
-		if (!empty($changedRecordReg->get('web_watch_movement'))){
-			$movementCategoryIds = $this->ensureCategories("Movement Type"
-					.CATEGORY_DELIMETER.$changedRecordReg->get('web_watch_movement'));
-		}
-		
-		//Handle the complication
-		$complicationCategoryIds = array();
-		if (!empty($changedRecordReg->get('web_watch_complications'))){
-			$complicationCategoryIds = $this->ensureCategories("Movement Complication"
-					.CATEGORY_DELIMETER.$changedRecordReg->get('web_watch_complications'));
-		}
-		
-		//Handle the case
-		$caseCategoryIds = array();
-		if (!empty($changedRecordReg->get('web_watch_case'))){
-			$caseCategoryIds = $this->ensureCategories("Case"
-					.CATEGORY_DELIMETER.$changedRecordReg->get('web_watch_case'));
-		}
-		
-		//Handle the dial
-		$dialCategoryIds = array();
-		if (!empty($changedRecordReg->get('web_watch_dial'))){
-			$dialCategoryIds = $this->ensureCategories("Dial"
-					.CATEGORY_DELIMETER.$changedRecordReg->get('web_watch_dial'));
-		}
-		
-		//Handle the strap
-		$strapCategoryIds = array();
-		if (!empty($changedRecordReg->get('web_watch_strap'))){
-			$strapCategoryIds = $this->ensureCategories("Strap"
-					.CATEGORY_DELIMETER.$changedRecordReg->get('web_watch_strap'));
-		}
-		
-		//Handle the buckle
-		$buckleCategoryIds = array();
-		if (!empty($changedRecordReg->get('web_watch_buckle'))){
-			$buckleCategoryIds = $this->ensureCategories("Buckle"
-					.CATEGORY_DELIMETER.$changedRecordReg->get('web_watch_buckle'));
-		}
-		
-		//Handle the condition
-		$conditionCategoryIds = array();
-		if (!empty($changedRecordReg->get('web_watch_condition'))){
-			$conditionCategoryIds = $this->ensureCategories("Condition"
-					.CATEGORY_DELIMETER.$changedRecordReg->get('web_watch_condition'));
-		}
-		
-		$allCats = array_merge($modelCategoryIds, $refNumCategoryIds, $diameterCategoryIds,
-				$movementCategoryIds, $complicationCategoryIds, $caseCategoryIds, $dialCategoryIds,
-				$strapCategoryIds, $buckleCategoryIds, $conditionCategoryIds);
+		$allCats = array_merge($brandModelCategory, $watchBrandSexModelCategory );
 		return array_unique($allCats);
 		
 	}
@@ -535,7 +469,7 @@ class ControllerCatalogRefresh extends Controller {
 				} elseif ($products && $this->hasChanged($products[0], $recordReg)){
 					$this->echoFlush("web_tag_number: ".$web_item_number." has changed.<br>");
 					$changedRecord[$index] = $recordReg;
-					$recordReg->set('current_product', $products );
+					$recordReg->set('current_product', $products[0] );
 					$index += 1;
 				} else {
 					$this->echoFlush("web_tag_number: ".$web_item_number." = ".$products[0]['product_id']." has not changed.<br>");
