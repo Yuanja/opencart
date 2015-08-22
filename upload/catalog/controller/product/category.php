@@ -209,6 +209,8 @@ class ControllerProductCategory extends Controller {
 				} else {
 					$rating = false;
 				}
+				
+				$attribute_groups = $this->model_catalog_product->getProductAttributes($result['product_id']);
 
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
@@ -220,7 +222,8 @@ class ControllerProductCategory extends Controller {
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $result['rating'],
-					'href'        => $this->url->link('product/product', 'path=' . $this->request->get['path'] . '&product_id=' . $result['product_id'] . $url)
+					'href'        => $this->url->link('product/product', 'path=' . $this->request->get['path'] . '&product_id=' . $result['product_id'] . $url),
+					'attribute_groups' => $attribute_groups
 				);
 			}
 
