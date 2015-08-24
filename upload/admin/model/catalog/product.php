@@ -700,4 +700,18 @@ class ModelCatalogProduct extends Model {
 
 		return $query->row['total'];
 	}
+	
+	public function updateFeaturedPrduct(){
+		$topProduct = array();
+		$query = $this->db->query("SELECT product_id from " . DB_PREFIX . "product order by sku desc LIMIT 10 ");
+		foreach ($query->rows as $result){
+			$topProduct[] = "\"".(string)$result['product_id']."\"";
+		}
+		
+		if (!empty($topProduct)){
+			$qstring = "UPDATE oc_module SET setting='{\"name\":\"Latest Items\",\"product\":["
+					.implode(",", $topProduct)."],\"limit\":\"10\",\"width\":\"200\",\"height\":\"200\",\"status\":\"1\"}"."' WHERE code ='featured' ";
+			$this->db->query($qstring);
+		}
+	}
 }

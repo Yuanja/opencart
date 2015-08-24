@@ -42,7 +42,16 @@ class ControllerCatalogRefresh extends Controller {
 		$recordValueRegArray = $this->getRecordValueRegArray($xml);
 		$changedRecordsRegArray = $this->getChangedRecordsArray($recordValueRegArray);
 		$this->saveChangedRecords($changedRecordsRegArray);		
+		//update featured/recently added
+		$this->updateFeaturedProducts();
 	}
+	
+	private function updateFeaturedProducts(){
+		//Select the top 20 items ordered by product 
+		$this->load->model('catalog/product');
+		$this->model_catalog_product->updateFeaturedPrduct();
+	}
+	
 	
 	private function saveChangedRecords($changedRecordsRegArray){
 		$this->echoFlush("Handling ".sizeof($changedRecordsRegArray)." number of changed records...<br>");
@@ -131,7 +140,7 @@ class ControllerCatalogRefresh extends Controller {
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_strap", "Strap", 90, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_buckle", "Buckle", 100, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_box_papers", "Box Paper", 110, $changedRecordReg));
-		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_box_papers", "Condition", 120, $changedRecordReg));
+		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_condition", "Condition", 120, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_price_retail", "Price Retail", 130, $changedRecordReg));
 		
 		return array_filter($productAttributes);
