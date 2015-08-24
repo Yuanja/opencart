@@ -98,28 +98,18 @@
             <div>
               <div class="caption">
                 <h4><?php echo $product['name']; ?></h4>
-                <p><?php echo $product['description']; ?></p>
                 <?php if ($product['price']) { ?>
-                <p class="price">
-                  <?php if (!$product['special']) { ?>
+                <p>
                   <?php echo $product['price']; ?>
-                  <?php } else { ?>
-                  <span class="price-new"><?php echo $product['special']; ?></span> <span class="price-old"><?php echo $product['price']; ?></span>
-                  <?php } ?>
                 </p>
                 <?php } ?>
-                <table class="table table-condensed">
+                <table >
                   <?php foreach ($product['attribute_groups'] as $attribute_group) { ?>
-                  <thead>
-                    <tr>
-                      <td colspan="2"><strong><?php echo $attribute_group['name']; ?></strong></td>
-                    </tr>
-                  </thead>
                   <tbody>
                     <?php foreach ($attribute_group['attribute'] as $attribute) { ?>
                     <tr>
                       <td><?php echo $attribute['name']; ?></td>
-                      <td><?php echo $attribute['text']; ?></td>
+                      <td><b><?php echo $attribute['text']; ?></b></td>
                     </tr>
                     <?php } ?>
                   </tbody>

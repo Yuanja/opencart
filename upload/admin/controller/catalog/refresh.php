@@ -119,7 +119,7 @@ class ControllerCatalogRefresh extends Controller {
 		$productAttributes = array();
 		array_push($productAttributes, $this->getAttributeArrayElement("web_designer", "Designer", 10, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_model", "Model", 20, $changedRecordReg));
-		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_manufacturer_reference_number", "Reference Number", 23, $changedRecordReg));
+		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_manufacturer_reference_number", "Ref:", 23, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_year", "Year", 30, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_serial_number", "Serial Number", 40, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_case_serial_number", "Case Serial Number", 50, $changedRecordReg));
