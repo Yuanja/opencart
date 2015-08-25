@@ -6,11 +6,6 @@
       <div class="image"><img src="<?php echo $product['thumb']; ?>" alt="<?php echo $product['name']; ?>" title="<?php echo $product['name']; ?>" class="img-responsive" /></div>
          <div class="caption">
              <h4><?php echo $product['name']; ?></h4>
-             <?php if ($product['price']) { ?>
-             <p>
-               <?php echo $product['price']; ?>
-             </p>
-             <?php } ?>
              <table >
                <?php foreach ($product['attribute_groups'] as $attribute_group) { ?>
                <tbody>
