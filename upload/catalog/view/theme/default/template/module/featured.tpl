@@ -17,7 +17,13 @@
                  <?php foreach ($attribute_group['attribute'] as $attribute) { ?>
                  <tr>
                    <td><?php echo $attribute['name']; ?></td>
-                   <td><b><?php echo $attribute['text']; ?></b></td>
+                   <?php if ($attribute['name'] == 'Price Retail') { ?>
+                     <td><b><span style="text-decoration: line-through;"><?php echo $attribute['text']; ?></span></b></td>
+                   <?php } elseif ($attribute['name'] == 'Sale Price') { ?>
+                     <td><b><?php echo $attribute['text']; ?></b></td>
+                   <?php } else { ?>
+                     <td><b><?php echo $attribute['text']; ?></b></td>
+                   <?php } ?>
                  </tr>
                  <?php } ?>
                </tbody>

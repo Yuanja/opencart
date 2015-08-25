@@ -130,29 +130,39 @@ class ControllerCatalogRefresh extends Controller {
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_model", "Model", 20, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_manufacturer_reference_number", "Ref:", 23, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_year", "Year", 30, $changedRecordReg));
-		array_push($productAttributes, $this->getAttributeArrayElement("web_serial_number", "Serial Number", 40, $changedRecordReg));
-		array_push($productAttributes, $this->getAttributeArrayElement("web_case_serial_number", "Case Serial Number", 50, $changedRecordReg));
+		//array_push($productAttributes, $this->getAttributeArrayElement("web_serial_number", "Serial Number", 40, $changedRecordReg));
+		//array_push($productAttributes, $this->getAttributeArrayElement("web_case_serial_number", "Case Serial Number", 50, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_diameter", "Diameter", 51, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_movement", "Movement", 55, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_complications", "Complications", 60, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_case", "Case", 70, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_dial", "Dial", 80, $changedRecordReg));
-		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_strap", "Strap", 90, $changedRecordReg));
-		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_buckle", "Buckle", 100, $changedRecordReg));
+		//array_push($productAttributes, $this->getAttributeArrayElement("web_watch_strap", "Strap", 90, $changedRecordReg));
+		//array_push($productAttributes, $this->getAttributeArrayElement("web_watch_buckle", "Buckle", 100, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_box_papers", "Box Paper", 110, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_condition", "Condition", 120, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_price_retail", "Price Retail", 130, $changedRecordReg));
+		array_push($productAttributes, $this->getAttributeArrayElement("web_price_sale", "Sale Price", 140, $changedRecordReg));
+		
 		
 		return array_filter($productAttributes);
 	}
 	
 	private function getAttributeArrayElement($feedElementKey, $attributeName, $sortOrder, $changedRecordReg){
 		if (!empty($changedRecordReg->get($feedElementKey))){
+			$value = $changedRecordReg->get($feedElementKey);
+			if ($feedElementKey == "web_price_sale" || $feedElementKey == "web_price_retail"){
+				$value = (float)str_replace("$", "", $value);
+				if (empty($value) ){
+					$value = 0;
+				}
+			}
+			
 			return array(
 				'attribute_id' => $this->getAttributeId($attributeName, 
 																	 $this->attributeGroupIdByNameCache[WATCH_ATTRIBUTE_GROUP],
 																	 $sortOrder),
-				'product_attribute_description' => array('1' => array("text" => $changedRecordReg->get($feedElementKey)))
+				'product_attribute_description' => array('1' => array("text" => $value ))
 			);
 		} else {
 			return NULL;
@@ -216,12 +226,7 @@ class ControllerCatalogRefresh extends Controller {
 				$changedRecordReg->get('web_designer')
 				.CATEGORY_DELIMETER.$model);
 
-		//Create the watches->brand-sex-model category
-		$watchBrandSexModelCategory = $this->ensureCategories("Watches"
-				.CATEGORY_DELIMETER.$sexType
-				.CATEGORY_DELIMETER.$model);
-		
-		$allCats = array_merge($brandModelCategory, $watchBrandSexModelCategory );
+		$allCats = array_merge($brandModelCategory );
 		return array_unique($allCats);
 		
 	}

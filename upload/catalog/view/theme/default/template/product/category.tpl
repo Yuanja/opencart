@@ -98,18 +98,19 @@
             <div>
               <div class="caption">
                 <h4><?php echo $product['name']; ?></h4>
-                <?php if ($product['price']) { ?>
-                <p>
-                  <?php echo $product['price']; ?>
-                </p>
-                <?php } ?>
                 <table >
                   <?php foreach ($product['attribute_groups'] as $attribute_group) { ?>
                   <tbody>
                     <?php foreach ($attribute_group['attribute'] as $attribute) { ?>
                     <tr>
                       <td><?php echo $attribute['name']; ?></td>
-                      <td><b><?php echo $attribute['text']; ?></b></td>
+                      <?php if ($attribute['name'] == 'Price Retail') { ?>
+                        <td><b><span style="text-decoration: line-through;"><?php echo $attribute['text']; ?></span></b></td>
+                      <?php } elseif ($attribute['name'] == 'Sale Price') { ?>
+                        <td><b><?php echo $attribute['text']; ?></b></td>
+                      <?php } else { ?>
+                        <td><b><?php echo $attribute['text']; ?></b></td>
+                      <?php } ?>
                     </tr>
                     <?php } ?>
                   </tbody>
