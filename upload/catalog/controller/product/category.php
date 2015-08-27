@@ -211,7 +211,9 @@ class ControllerProductCategory extends Controller {
 				}
 				
 				$attribute_groups = $this->model_catalog_product->getProductAttributes($result['product_id']);
-
+				$data['enquire_link'] = $this->url->link('information/contact');
+				$data['customer'] = $this->customer;
+				
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,

@@ -129,6 +129,43 @@
                     <?php } ?>
                   </tbody>
                   <?php } ?>
+                  
+                 <tr><td colspan=2>
+               <div id="floatingenquire<?php echo $product['product_id']; ?>"> 
+                  <div id="tab"><b>Click To Enquire</b></div> 
+                  <div id="contactform"> 
+                     <div class="entry">
+                     <form method="post" action="<?php echo $enquire_link ?>"> 
+                     <table> 
+                        <tr> <td valign="top"> <label for="comments">Message *</label> </td> </tr>
+                        <tr> <td valign="top"> <textarea name="enquiry" maxlength="1000" cols="25" rows="6"></textarea> </td> </tr> 
+                        <tr> <td colspan="2" style="text-align:center"> <input type="submit" value="Submit"> </td> </tr> 
+                     </table>
+                     <input type="hidden" name="product_name" value="<?php echo $product['name'] ?>"/>
+                     <input type="hidden" name="product_link" value="<?php echo $product['href'] ?>"/>
+                     <input type="hidden" name="name" value="<?php echo $customer->getFirstName() ?>"/>
+                     <input type="hidden" name="email" value="<?php echo $customer->getEmail() ?>"/>
+                     </form>
+                     </div> 
+                  </div> 
+               </div>
+               <style> 
+                  #floatingenquirebak<?php echo $product['product_id']; ?> #contactform {border: 1px solid black; border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;background-color:#eff3fa;display:none;} 
+                  #floatingenquire<?php echo $product['product_id']; ?> #contactform {display:none;}
+
+                  #floatingenquire<?php echo $product['product_id']; ?> #contactform .sbutton {clear:both;margin:5px 5px 0 5px;} </style> 
+                  <script> 
+                     var flip<?php echo $product['product_id']; ?> = 0; 
+                     $("#floatingenquire<?php echo $product['product_id']; ?> #tab").click(function () { 
+                        flip<?php echo $product['product_id']; ?>++; 
+                        if (flip<?php echo $product['product_id']; ?> % 2 == 1) 
+                           $("#floatingenquire<?php echo $product['product_id']; ?> #contactform").slideDown('slow'); 
+                        else $("#floatingenquire<?php echo $product['product_id']; ?> #contactform").slideUp('slow'); 
+                        }); 
+                  </script>
+               </style>
+               </td></tr>
+                  
                 </table>
             </div>
           </div>

@@ -41,11 +41,10 @@
 <body class="<?php echo $class; ?>">
 <nav id="top">
   <div class="container">
-    <?php echo $currency; ?>
     <?php echo $language; ?>
     <div id="top-links" class="nav pull-right">
       <ul class="list-inline">
-        <li><a href="<?php echo $contact; ?>"><i class="fa fa-phone"></i></a> <span class="hidden-xs hidden-sm hidden-md"><?php echo $telephone; ?></span></li>
+      <?php if ($logged) { ?>
         <li class="dropdown"><a href="<?php echo $account; ?>" title="<?php echo $text_account; ?>" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <span class="hidden-xs hidden-sm hidden-md"><?php echo $text_account; ?></span> <span class="caret"></span></a>
           <ul class="dropdown-menu dropdown-menu-right">
             <?php if ($logged) { ?>
@@ -57,6 +56,7 @@
             <?php } ?>
           </ul>
         </li>
+        <?php } ?>
       </ul>
     </div>
   </div>
@@ -64,7 +64,8 @@
 <header>
   <div class="container">
     <div class="row">
-      <div class="col-sm-4">
+      <div class="col-sm-4"></div>
+      <div class="col-sm-8">
         <div id="logo">
           <?php if ($logo) { ?>
           <a href="<?php echo $home; ?>"><img src="<?php echo $logo; ?>" title="<?php echo $name; ?>" alt="<?php echo $name; ?>" class="img-responsive" /></a>
@@ -73,9 +74,15 @@
           <?php } ?>
         </div>
       </div>
-      <div class="col-sm-5"><?php echo $search; ?>
+      <div class="col-sm-4"></div>
+    </div>
+    <?php if ($logged) { ?>
+    <div class="row">
+      <div class="col-sm-8"></div>
+      <div class="col-sm-4"><?php echo $search; ?>
       </div>
     </div>
+    <?php } ?>
   </div>
 </header>
 <?php if ($categories) { ?>
