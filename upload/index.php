@@ -260,6 +260,9 @@ $controller->addPreAction(new Action('common/maintenance'));
 // SEO URL's
 $controller->addPreAction(new Action('common/seo_url'));
 
+// Login
+//$controller->addPreAction(new Action('account/login/check'));
+
 // Router
 if (isset($request->get['route'])) {
 	$action = new Action($request->get['route']);

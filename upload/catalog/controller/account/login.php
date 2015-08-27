@@ -225,4 +225,19 @@ class ControllerAccountLogin extends Controller {
 
 		return !$this->error;
 	}
+	
+	public function check() {
+		$route = isset($this->request->get['route']) ? $this->request->get['route'] : '';
+	
+		$ignore = array(
+				'account/login',
+				'account/forgotten',
+				'account/register',
+				'account/password'
+		);
+	
+		if (!$this->customer->isLogged() && !in_array($route, $ignore)) {
+			return new Action('account/login');
+		}
+	}
 }
