@@ -102,7 +102,11 @@
       <?php } ?>
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" class="form-horizontal">
         <fieldset>
+         <?php if(isset($product_name)) { ?>
+          <h3><?php echo "Enquire: ".$product_name ?></h3>
+         <?php } else { ?>
           <h3><?php echo $text_contact; ?></h3>
+         <?php } ?>
           <div class="form-group required">
             <label class="col-sm-2 control-label" for="input-name"><?php echo $entry_name; ?></label>
             <div class="col-sm-10">
@@ -137,6 +141,12 @@
             <input class="btn btn-primary" type="submit" value="<?php echo $button_submit; ?>" />
           </div>
         </div>
+        <?php if(isset($product_name)) { ?>
+           <input type="hidden" name="product_name" value="<?php echo $product_name ?>" />
+        <?php } ?>
+        <?php if(isset($product_link)) { ?>
+           <input type="hidden" name="product_link" value="<?php echo $product_link ?>" />
+        <?php } ?>
       </form>
       <?php echo $content_bottom; ?></div>
     <?php echo $column_right; ?></div>

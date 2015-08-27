@@ -17,11 +17,29 @@ class ControllerInformationContact extends Controller {
 			$mail->smtp_port = $this->config->get('config_mail_smtp_port');
 			$mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
 
+			$senderName=isset($this->request->post['name']) ? html_entity_decode($this->request->post['name'], ENT_QUOTES, 'UTF-8') : $this->customer->getFirstName()." ".$this->customer->getLastName(); 
+			$email=isset($this->request->post['email']) ? $this->request->post['email'] : $this->customer->getEmail(); 
+			$emailSubject=NULL;
+			if (isset($this->request->post['product_name'])){
+				//Get product name and get the link
+				$emailSubject = html_entity_decode(sprintf($this->language->get('email_subject'), $this->request->post['product_name']), ENT_QUOTES, 'UTF-8');
+			} else {
+				$emailSubject = html_entity_decode(sprintf($this->language->get('email_subject'), $this->request->post['name']), ENT_QUOTES, 'UTF-8');
+			}
+
+			$emailBody = NULL;
+			if (isset($this->request->post['product_link'])){
+				$emailBody = $this->request->post['enquiry'];	
+				$emailBody = $emailBody."\nProduct Link: ".$this->request->post['product_link'];
+			} else {
+				$emailBody = $this->request->post['enquiry'];
+			}
+			
 			$mail->setTo($this->config->get('config_email'));
-			$mail->setFrom($this->request->post['email']);
-			$mail->setSender(html_entity_decode($this->request->post['name'], ENT_QUOTES, 'UTF-8'));
-			$mail->setSubject(html_entity_decode(sprintf($this->language->get('email_subject'), $this->request->post['name']), ENT_QUOTES, 'UTF-8'));
-			$mail->setText($this->request->post['enquiry']);
+			$mail->setFrom($email);
+			$mail->setSender($senderName);
+			$mail->setSubject($emailSubject);
+			$mail->setText($emailBody);
 			$mail->send();
 
 			$this->response->redirect($this->url->link('information/contact/success'));
@@ -133,7 +151,19 @@ class ControllerInformationContact extends Controller {
 		} else {
 			$data['email'] = $this->customer->getEmail();
 		}
-
+		
+		if(isset($this->request->post['product_link'])){
+			$data['product_link'] = $this->request->post['product_link'];
+		} else {
+			$data['product_link'] = "";
+		}
+		
+		if (isset($this->request->post['product_name'])){
+			$data['product_name'] = $this->request->post['product_name'];
+		} else {
+			$data['product_name'] = "";
+		}
+		
 		if (isset($this->request->post['enquiry'])) {
 			$data['enquiry'] = $this->request->post['enquiry'];
 		} else {

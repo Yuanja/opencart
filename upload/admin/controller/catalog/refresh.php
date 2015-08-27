@@ -28,7 +28,9 @@ class ControllerCatalogRefresh extends Controller {
 	
 	public function echoFlush($message){
 		if (ob_get_level() == 0) ob_start();
-		echo "<br>".$message;
+		$pst = new DateTimeZone('America/Los_Angeles');
+		$nowDT = new DateTime('now', $pst);
+		echo "<br>".($nowDT->format('Y-m-d H:i:s')).CATEGORY_DELIMETER.$message."\n";
 		ob_flush();
 		flush();
 		ob_end_flush();
@@ -44,10 +46,12 @@ class ControllerCatalogRefresh extends Controller {
 		$this->saveChangedRecords($changedRecordsRegArray);		
 		//update featured/recently added
 		$this->updateFeaturedProducts();
+		$this->echoFlush("End processing!");
 	}
 	
 	private function updateFeaturedProducts(){
 		//Select the top 20 items ordered by product 
+		$this->echoFlush("Updating featured products section.");
 		$this->load->model('catalog/product');
 		$this->model_catalog_product->updateFeaturedPrduct();
 	}
@@ -97,6 +101,9 @@ class ControllerCatalogRefresh extends Controller {
 					.$changedRecordReg->get('web_watch_manufacturer_reference_number')."_".$countOrder.".jpg";
 			$imageName = str_replace("/", "_", $imageName);
 			$imageName = str_replace(" ", "_", $imageName);
+			$what   = "\\x00-\\x20";    //all white-spaces and control chars
+			$imageName = trim( preg_replace( "/[".$what."]+/" , "" , $imageName ) , $what );
+			
 				
 			$imageOutUrlPath = IMAGE_URL_BASE."/".$imageName;;
 			$this->load->model('tool/image');
