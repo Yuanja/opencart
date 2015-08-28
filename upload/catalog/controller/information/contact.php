@@ -30,7 +30,7 @@ class ControllerInformationContact extends Controller {
 			$emailBody = NULL;
 			if (isset($this->request->post['product_link'])){
 				$emailBody = $this->request->post['enquiry'];	
-				$emailBody = $emailBody."\nProduct Link: ".$this->request->post['product_link'];
+				$emailBody = $emailBody."\nProduct Link: ".html_entity_decode($this->request->post['product_link']);
 			} else {
 				$emailBody = $this->request->post['enquiry'];
 			}

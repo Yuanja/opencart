@@ -99,10 +99,11 @@ class ControllerCatalogRefresh extends Controller {
 					.$changedRecordReg->get('web_watch_year')."_"
 					.$changedRecordReg->get('web_serial_number')."_"
 					.$changedRecordReg->get('web_watch_manufacturer_reference_number')."_".$countOrder.".jpg";
+			$imageName = utf8_encode($imageName);
 			$imageName = str_replace("/", "_", $imageName);
 			$imageName = str_replace(" ", "_", $imageName);
-			$what   = "\\x00-\\x20";    //all white-spaces and control chars
-			$imageName = trim( preg_replace( "/[".$what."]+/" , "" , $imageName ) , $what );
+			//$what   = "\\x00-\\x7F";    //all white-spaces and control chars
+			//$imageName = trim( preg_replace( "/[".$what."]+/" , "" , $imageName ) , $what );
 			
 				
 			$imageOutUrlPath = IMAGE_URL_BASE."/".$imageName;;
@@ -116,7 +117,7 @@ class ControllerCatalogRefresh extends Controller {
 				file_put_contents($imageFilePath, $rawImageFromUrl);
 				$this->echoFlush("Writing images to: ".$imageOutUrlPath."...");
 			} catch (ErrorException $e){
-				$this->echoFlush("Downloading images from: ".$imageOutUrlPath."... FAILED.");
+				$this->echoFlush("Downloading images from: ".$imageOutUrlPath."... FAILED.".$e->getTraceAsString());
 				$imageOutUrlPath = "no_image.png";
 			}
 				
@@ -225,8 +226,7 @@ class ControllerCatalogRefresh extends Controller {
 	}
 	
 	private function getAllUniqueCategoryIds($changedRecordReg){
-		$model = !empty($changedRecordReg->get('web_watch_model')) ? $changedRecordReg->get('web_watch_model') : "Unknown";
-		$sexType = !empty($changedRecordReg->get('web_watch_sex')) ? $changedRecordReg->get('web_watch_sex') : "Unisex";
+		$model = !empty($changedRecordReg->get('web_watch_model')) ? $changedRecordReg->get('web_watch_model') : "Unknown Model";
 
 		//Create the make->model cats
 		$brandModelCategory = $this->ensureCategories(
@@ -484,7 +484,7 @@ class ControllerCatalogRefresh extends Controller {
 				$products = $this->model_catalog_product->getProducts($filter_data);
 				
 				if (!$products){
-					$this->echoFlush("web_tag_number: ".$web_item_number." is new.<br>");
+					$this->echoFlush("web_tag_number: ".$web_item_number." is new.<br>name: ".$recordReg->get("web_description_short"));
 					$changedRecord[$index] = $recordReg;
 					$index += 1;
 				} elseif ($products && $this->hasChanged($products[0], $recordReg)){
