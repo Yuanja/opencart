@@ -103,8 +103,23 @@ class ControllerCommonHeader extends Controller {
 
 		$categories = $this->model_catalog_category->getCategories(0);
 
+		//Justin just wants 10 at any time.  Filter is here:
+		$allowedTopCategoryNames = array(
+			"Rolex",
+			"Patek Philippe",
+			"Cartier",
+			"A. Lange & Sohne",
+			"Panerai",
+			"Audemars Piguet",
+			"Piaget",
+			"Breguet",
+			"Hublot",
+			"Omega",
+			"Vacheron Constantin"
+		);
+
 		foreach ($categories as $category) {
-			if ($category['top']) {
+			if ($category['top'] && in_array($category['name'], $allowedTopCategoryNames)) {
 				// Level 2
 				$children_data = array();
 
