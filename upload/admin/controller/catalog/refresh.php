@@ -26,7 +26,7 @@ class ControllerCatalogRefresh extends Controller {
 			"Hublot" => 9,
 			"Omega" => 10,
 			"Vacheron Constantin" => 11,
-			"Other Brands" => 12
+			"Other Brands" => 12000
 		);
 	
 	public function index() {
