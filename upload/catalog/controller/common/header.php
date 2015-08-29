@@ -116,7 +116,7 @@ class ControllerCommonHeader extends Controller {
 			"Hublot",
 			"Omega",
 			"Vacheron Constantin",
-			"Other Watches"
+			"Other Brands"
 		);
 
 		foreach ($categories as $category) {

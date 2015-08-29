@@ -26,7 +26,7 @@ class ControllerCatalogRefresh extends Controller {
 			"Hublot" => 9,
 			"Omega" => 10,
 			"Vacheron Constantin" => 11,
-			"Other Watches" => 12
+			"Other Brands" => 12
 		);
 	
 	public function index() {
@@ -38,6 +38,23 @@ class ControllerCatalogRefresh extends Controller {
 		$this->echoFlush("<title>Refreshing catalog</title>");
 		$this->echoFlush("</head>");
 		$this->echoFlush("<body>");
+		
+		if (isset($this->request->get['clear'])){
+			//Delete all product
+			$this->echoFlush("Deleting all products...");
+			$this->load->model('catalog/product');
+			foreach ($this->model_catalog_product->getProducts(array()) as $product){
+				$this->echoFlush("Deleting product: ".$product['product_id']);
+				$this->model_catalog_product->deleteProduct($product['product_id']);
+			}
+			
+			$this->echoFlush("Deleting all catgories...");
+			$this->load->model('catalog/category');
+			foreach ($this->model_catalog_category->getCategories(array()) as $category){
+				$this->echoFlush("Deleting category: ".$category['category_id']);
+				$this->model_catalog_category->deleteCategory($category['category_id']);
+			}
+		}
 		
 		$this->readFromFeed();
 	}
@@ -252,7 +269,7 @@ class ControllerCatalogRefresh extends Controller {
 		$allOtherCatg = array();
 		//Create the All Other Watches ->make->model
 		if (!in_array($brand, $this->allowedTopCategoryNames)){
-			$allOtherCatg = $this->ensureCategories("Other Watches".CATEGORY_DELIMETER.$brand.CATEGORY_DELIMETER.$model);
+			$allOtherCatg = $this->ensureCategories(OTHER_BRAND_CAT_NAME.CATEGORY_DELIMETER.$brand.CATEGORY_DELIMETER.$model);
 		}
 
 		$allCats = array_merge($brandModelCategory, $allOtherCatg );
