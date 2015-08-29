@@ -13,6 +13,22 @@ class ControllerCatalogRefresh extends Controller {
 	private $attributeGroupIdByNameCache = array();
 	private $attributeIdByNameCache = array();
 	
+	//Justin just wants 10 at any time.  Filter is here:
+	private	$allowedTopCategoryNames = array(
+			"Rolex" => 1,
+			"Patek Philippe" => 2,
+			"Cartier" => 3,
+			"A. Lange & Sohne" => 4,
+			"Panerai" => 5,
+			"Audemars Piguet" => 6,
+			"Piaget" => 7,
+			"Breguet" => 8,
+			"Hublot" => 9,
+			"Omega" => 10,
+			"Vacheron Constantin" => 11,
+			"Other Watches" => 12
+		);
+	
 	public function index() {
 		$this->turnWarningIntoExceptions();
 		
@@ -226,14 +242,20 @@ class ControllerCatalogRefresh extends Controller {
 	}
 	
 	private function getAllUniqueCategoryIds($changedRecordReg){
+		$brand = $changedRecordReg->get('web_designer');
 		$model = !empty($changedRecordReg->get('web_watch_model')) ? $changedRecordReg->get('web_watch_model') : "Unknown Model";
 
 		//Create the make->model cats
 		$brandModelCategory = $this->ensureCategories(
-				$changedRecordReg->get('web_designer')
-				.CATEGORY_DELIMETER.$model);
+				$brand.CATEGORY_DELIMETER.$model);
+		
+		$allOtherCatg = array();
+		//Create the All Other Watches ->make->model
+		if (!in_array($brand, $this->allowedTopCategoryNames)){
+			$allOtherCatg = $this->ensureCategories("Other Watches".CATEGORY_DELIMETER.$brand.CATEGORY_DELIMETER.$model);
+		}
 
-		$allCats = array_merge($brandModelCategory );
+		$allCats = array_merge($brandModelCategory, $allOtherCatg );
 		return array_unique($allCats);
 		
 	}
@@ -277,11 +299,18 @@ class ControllerCatalogRefresh extends Controller {
 	
 	private function makeCategory($categoryName, $currentParentCategoryId){
 		//Nope, insert the bitch. and return the new id.
+		
+		//Override for sort_order
+		$sortOrder = 100;
+		if (!isset($currentParentCategoryId) && array_key_exists($categoryName, $this->allowedTopCategoryNames)){
+			$sortOrder = $this->allowedTopCategoryNames[$categoryName];
+		}
+		
 		$data = array(
 				'parent_id' => isset($currentParentCategoryId) ? $currentParentCategoryId : NULL,
 				'top' => !isset($currentParentCategoryId) ? 1 : 0,
 				'column' => '0',
-				'sort_order' => '1',
+				'sort_order' => $sortOrder,
 				'status' => '1'
 		);
 		//set language hash values.  To be inserted for category_description.
