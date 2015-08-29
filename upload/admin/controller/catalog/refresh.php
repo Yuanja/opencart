@@ -269,7 +269,7 @@ class ControllerCatalogRefresh extends Controller {
 		$allOtherCatg = array();
 		//Create the All Other Watches ->make->model
 		if (!in_array($brand, $this->allowedTopCategoryNames)){
-			$allOtherCatg = $this->ensureCategories(OTHER_BRAND_CAT_NAME.CATEGORY_DELIMETER.$brand.CATEGORY_DELIMETER.$model);
+			$allOtherCatg = $this->ensureCategories("Other Brands".CATEGORY_DELIMETER.$brand.CATEGORY_DELIMETER.$model);
 		}
 
 		$allCats = array_merge($brandModelCategory, $allOtherCatg );
