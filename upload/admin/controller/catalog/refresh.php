@@ -1,10 +1,10 @@
 <?php
 define("CATEGORY_DELIMETER", "&nbsp;&nbsp;&gt;&nbsp;&nbsp;");
 define("WATCH_ATTRIBUTE_GROUP", "Watch attributes");
-define("SOURCE_IP", "http://107.197.220.126:81");
+define("SOURCE_IP", "107.197.220.126");
 define("IMAGE_URL_BASE", "catalog/watches");
 define("DOWNLOAD_DIR", DIR_IMAGE.IMAGE_URL_BASE);
-define("FEED_URL", SOURCE_IP."/fmi/xml/fmresultset.xml?-db=DEG&-lay=INVENTORY_WEB+-+Web+Publishing&-find&web_flag__c.op=eq&web_flag__c=1");
+define("FEED_URL", "https://".SOURCE_IP."/fmi/xml/fmresultset.xml?-db=DEG&-lay=WEB_XML&-find&web_flag__c.op=eq&web_flag__c=1");
 
 class ControllerCatalogRefresh extends Controller {
 	
@@ -44,15 +44,22 @@ class ControllerCatalogRefresh extends Controller {
 			$this->echoFlush("Deleting all products...");
 			$this->load->model('catalog/product');
 			foreach ($this->model_catalog_product->getProducts(array()) as $product){
-				$this->echoFlush("Deleting product: ".$product['product_id']);
+				$this->echoFlush("Deleting product: ".$product['product_id']." name: ".$product['name']);
 				$this->model_catalog_product->deleteProduct($product['product_id']);
 			}
 			
 			$this->echoFlush("Deleting all catgories...");
 			$this->load->model('catalog/category');
 			foreach ($this->model_catalog_category->getCategories(array()) as $category){
-				$this->echoFlush("Deleting category: ".$category['category_id']);
+				$this->echoFlush("Deleting category: ".$category['category_id']." name: ".$category['name']);
 				$this->model_catalog_category->deleteCategory($category['category_id']);
+			}
+			
+			$this->echoFlush("Deleting all attributes...");
+			$this->load->model('catalog/attribute');
+			foreach ($this->model_catalog_attribute->getAttributes(array()) as $attribute){
+				$this->echoFlush("Deleting attribte: ".$attribute['attribute_id']." name: ".$attribute['name']);
+				$this->model_catalog_attribute->deleteAttribute($attribute['attribute_id']);
 			}
 		}
 		
@@ -71,15 +78,70 @@ class ControllerCatalogRefresh extends Controller {
 	
 	public function readFromFeed() {
 		$this->echoFlush("Reading from source...<br>");
-		$xmlRaw = file_get_contents(FEED_URL);
+		
+		//Set timeout to 20min
+		$ctx = stream_context_create(array('http'=>
+				array(
+						'timeout' => 1200,  //1200 Seconds is 20 Minutes
+				)
+		));
+		//$xmlRaw = file_get_contents(FEED_URL, false, $ctx);
+		//$xmlRaw = file_get_contents(FEED_URL);
+		//$xmlRaw = $this->curl_file_get_contents(FEED_URL);
+		
 		//$xml = simplexml_load_file("/Users/jyuan/Documents/opencart-2.0.3.1/upload/fmresultset.xml") or die("fmresultset.xml can't be opened.");
-		$xml = simplexml_load_string($xmlRaw);
+		//$xmlRaw = $this->url_get_contents();
+		
+		$xml = simplexml_load_file('tmpout.xml');
 		$recordValueRegArray = $this->getRecordValueRegArray($xml);
 		$changedRecordsRegArray = $this->getChangedRecordsArray($recordValueRegArray);
 		$this->saveChangedRecords($changedRecordsRegArray);		
 		//update featured/recently added
 		$this->updateFeaturedProducts();
 		$this->echoFlush("End processing!");
+	}
+
+	private function url_get_contents() {
+		if (!function_exists('curl_init')){
+			die('CURL is not installed!');
+		}
+		$fp = fopen('tmpout.xml', 'w');
+		
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, FEED_URL);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30000);
+		curl_setopt($ch, CURLOPT_FILE, $fp);
+		
+		$output = curl_exec($ch);
+		curl_close($ch);
+		fclose($fp);
+		return $output;
+	}
+	
+	private function downloadFeed(){
+		$response = NULL;
+		if ( $fp = fsockopen("ssl://".SOURCE_IP, 443, $errno, $errstr, 3) ) {
+			$data ="-db=DEG&-lay=WEB_XML&-find&web_flag__c.op=eq&web_flag__c=1";
+			
+			$msg  = 'POST /fmi/xml/fmresultset.xml?-db=DEG&-lay=WEB_XML&-find&web_flag__c.op=eq&web_flag__c=1 HTTP/1.1' . "\r\n";
+			$msg .= 'Content-Type: application/x-www-form-urlencoded' . "\r\n";
+			$msg .= 'Content-Length: ' . strlen($data) . "\r\n";
+			$msg .= 'Host: ' . SOURCE_IP . "\r\n";
+			$msg .= 'Connection: close' . "\r\n\r\n";
+			$msg .= $data;
+			if ( fwrite($fp, $msg) ) {
+				while ( !feof($fp) ) {
+					
+					$response = fgets($fp, 1024);
+				}
+			}
+			fclose($fp);
+		
+		} else {
+			$response = false;
+		}
 	}
 	
 	private function updateFeaturedProducts(){
@@ -167,7 +229,7 @@ class ControllerCatalogRefresh extends Controller {
 		$this->primeAttributeCache();
 		
 		$productAttributes = array();
-		array_push($productAttributes, $this->getAttributeArrayElement("web_designer", "Designer", 10, $changedRecordReg));
+		array_push($productAttributes, $this->getAttributeArrayElement("web_designer", "Brand", 10, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_model", "Model", 20, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_manufacturer_reference_number", "Ref:", 23, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_year", "Year", 30, $changedRecordReg));
@@ -182,7 +244,7 @@ class ControllerCatalogRefresh extends Controller {
 		//array_push($productAttributes, $this->getAttributeArrayElement("web_watch_buckle", "Buckle", 100, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_box_papers", "Box Paper", 110, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_condition", "Condition", 120, $changedRecordReg));
-		array_push($productAttributes, $this->getAttributeArrayElement("web_price_retail", "Price Retail", 130, $changedRecordReg));
+		array_push($productAttributes, $this->getAttributeArrayElement("web_price_retail", "Retail Price", 130, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_price_sale", "Sale Price", 140, $changedRecordReg));
 		
 		
@@ -260,7 +322,7 @@ class ControllerCatalogRefresh extends Controller {
 	
 	private function getAllUniqueCategoryIds($changedRecordReg){
 		$brand = $changedRecordReg->get('web_designer');
-		$model = !empty($changedRecordReg->get('web_watch_model')) ? $changedRecordReg->get('web_watch_model') : "Unknown Model";
+		$model = !empty($changedRecordReg->get('web_watch_model')) ? $changedRecordReg->get('web_watch_model') : "Other Models";
 
 		//Create the make->model cats
 		$brandModelCategory = $this->ensureCategories(

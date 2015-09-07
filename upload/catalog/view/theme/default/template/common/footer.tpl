@@ -29,3 +29,19 @@
   </div>
 </footer>
 </body></html>
+<script type="text/javascript">
+ var startPosition = 0;
+ var contentMargin = 28;
+ 
+ $(window).scroll(function() {
+    if($(window).scrollTop() > startPosition) {
+      width = $('#top').width();
+      height = $('#top').height();
+      $('#top').css('position', 'fixed').css('top',0).css('width',width).css('border-radius','0px').css('z-index','999');
+      $('#logo').css('margin-top', height+contentMargin);
+    } else {
+      $('#top').removeAttr('style');
+      $('#logo').removeAttr('style');
+    }
+ }); 
+ </script>

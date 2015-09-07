@@ -8,12 +8,16 @@ class Session {
 			ini_set('session.use_cookies', 'On');
 			ini_set('session.use_trans_sid', 'Off');
 			ini_set('session.cookie_httponly', 'On');
-
+			
+			if (!preg_match('/^[a-zA-Z0-9,\-]{22,40}$/', $session_id)) {
+				$session_id = uniqid();
+			}
 			if ($session_id) {
 				session_id($session_id);
 			}
 
 			session_set_cookie_params(0, '/');
+			
 			session_start();
 		}
 

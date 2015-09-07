@@ -1,14 +1,14 @@
 <?php
 class ControllerCommonHeader extends Controller {
 	public function index() {
-		if (!$this->customer->isLogged() 
-				&& ($this->request->get["route"] != "account/login") 
-				&& ($this->request->get["route"] != "account/forgotten")
-				&& ($this->request->get["route"] != "account/register")) {
+// 		if (!$this->customer->isLogged() 
+// 				&& ($this->request->get["route"] != "account/login") 
+// 				&& ($this->request->get["route"] != "account/forgotten")
+// 				&& ($this->request->get["route"] != "account/register")) {
 					
-			$this->session->data['redirect'] = $this->url->link('common/home');
-			$this->response->redirect($this->url->link("account/login")); 
-		} 
+// 			$this->session->data['redirect'] = $this->url->link('common/home');
+// 			$this->response->redirect($this->url->link("account/login")); 
+// 		} 
 	
 		$data['title'] = $this->document->getTitle();
 
