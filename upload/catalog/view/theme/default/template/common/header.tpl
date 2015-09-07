@@ -39,7 +39,7 @@
 <?php echo $google_analytics; ?>
 </head>
 <body class="<?php echo $class; ?>">
-<nav id="top" class="fixed-navi">
+<nav id="top">
   <div class="container">
     <?php echo $language; ?>
     <div id="top-links" class="nav pull-right">
