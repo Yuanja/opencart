@@ -8,6 +8,23 @@ class ControllerInformationContact extends Controller {
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+			$name_of_uploaded_file =
+				basename($_FILES['uploaded_file']['name']);
+			$path_of_uploaded_file = NULL;
+			if(isset($name_of_uploaded_file)){
+				//copy the temp. uploaded file to uploads folder
+				$path_of_uploaded_file = DIR_UPLOAD . $name_of_uploaded_file;
+				$tmp_path = $_FILES["uploaded_file"]["tmp_name"];
+				
+				if(is_uploaded_file($tmp_path))
+				{
+					if(!copy($tmp_path,$path_of_uploaded_file))
+					{
+						$errors .= '\n error while copying the uploaded file';
+					}
+				}
+			}
+			
 			$mail = new Mail();
 			$mail->protocol = $this->config->get('config_mail_protocol');
 			$mail->parameter = $this->config->get('config_mail_parameter');
@@ -28,18 +45,23 @@ class ControllerInformationContact extends Controller {
 			}
 
 			$emailBody = NULL;
-			if (isset($this->request->post['product_link'])){
+			if (isset($this->request->post['product_link'])){ //in the case of product enquiry
 				$emailBody = $this->request->post['enquiry'];	
 				$emailBody = $emailBody."\nProduct Link: ".html_entity_decode($this->request->post['product_link']);
 			} else {
 				$emailBody = $this->request->post['enquiry'];
 			}
 			
+
 			$mail->setTo($this->config->get('config_email'));
 			$mail->setFrom($email);
 			$mail->setSender($senderName);
 			$mail->setSubject($emailSubject);
 			$mail->setText($emailBody);
+			
+			if (isset($name_of_uploaded_file)){
+				$mail->addAttachment($path_of_uploaded_file);
+			}
 			$mail->send();
 
 			$this->response->redirect($this->url->link('information/contact/success'));
@@ -90,6 +112,12 @@ class ControllerInformationContact extends Controller {
 			$data['error_enquiry'] = $this->error['enquiry'];
 		} else {
 			$data['error_enquiry'] = '';
+		}
+		
+		if (isset($this->error['upload'])) {
+			$data['error_upload'] = $this->error['upload'];
+		} else {
+			$data['error_upload'] = '';
 		}
 
 		$data['button_submit'] = $this->language->get('button_submit');
@@ -155,13 +183,20 @@ class ControllerInformationContact extends Controller {
 		if(isset($this->request->post['product_link'])){
 			$data['product_link'] = $this->request->post['product_link'];
 		} else {
-			$data['product_link'] = "";
+			$data['product_link'] = NULL;
 		}
 		
 		if (isset($this->request->post['product_name'])){
 			$data['product_name'] = $this->request->post['product_name'];
 		} else {
-			$data['product_name'] = "";
+			$data['product_name'] = NULL;
+		}
+		
+		if (isset($this->request->get['rfq']) 
+				|| isset($this->request->post['rfq'])){
+			$data['rfq'] = '1';
+		} else {
+			$data['rfq'] = NULL;
 		}
 		
 		if (isset($this->request->post['enquiry'])) {
@@ -237,7 +272,43 @@ class ControllerInformationContact extends Controller {
 		if ((utf8_strlen($this->request->post['enquiry']) < 10) || (utf8_strlen($this->request->post['enquiry']) > 3000)) {
 			$this->error['enquiry'] = $this->language->get('error_enquiry');
 		}
-
+		
+		$name_of_uploaded_file =
+		    basename($_FILES['uploaded_file']['name']);
+		if(isset($name_of_uploaded_file)){
+			//get the file extension of the file
+			$type_of_uploaded_file =
+			    substr($name_of_uploaded_file,
+			    strrpos($name_of_uploaded_file, '.') + 1);
+			 
+			$size_of_uploaded_file =
+			    $_FILES["uploaded_file"]["size"]/1024;//size in KBs
+			//Settings
+			$max_allowed_file_size = 500; // size in KB
+			$allowed_extensions = array("jpg", "jpeg", "gif", "bmp");
+			
+			//Validations
+			if($size_of_uploaded_file > $max_allowed_file_size )
+			{
+				$this->error['upload'] = "\n Size of file should be less than $max_allowed_file_size";
+			}
+			
+			//------ Validate the file extension -----
+			$allowed_ext = false;
+			for($i=0; $i<sizeof($allowed_extensions); $i++)
+			{
+				if(strcasecmp($allowed_extensions[$i],$type_of_uploaded_file) == 0)
+				{
+					$allowed_ext = true;
+				}
+			}
+			
+			if(!$allowed_ext)
+			{
+				$this->error['upload'] = "\n The uploaded file is not supported file type. ".
+						" Only the following file types are supported: ".implode(',',$allowed_extensions);
+			}
+		}
 		return !$this->error;
 	}
 }

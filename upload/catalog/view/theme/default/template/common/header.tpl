@@ -42,9 +42,9 @@
 <nav id="top">
   <div class="container">
     <?php echo $language; ?>
+<!-- 
     <div id="top-links" class="nav pull-right">
       <ul class="list-inline">
-      <?php if ($logged) { ?>
         <li class="dropdown"><a href="<?php echo $account; ?>" title="<?php echo $text_account; ?>" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <span class="hidden-xs hidden-sm hidden-md"><?php echo $text_account; ?></span> <span class="caret"></span></a>
           <ul class="dropdown-menu dropdown-menu-right">
             <?php if ($logged) { ?>
@@ -56,7 +56,13 @@
             <?php } ?>
           </ul>
         </li>
-        <?php } ?>
+      </ul>
+    </div>
+    
+    -->
+    <div id="top-links" class="nav pull-left">
+        </ul class="list-inline">
+         <li class="dropdown"><a href="<?php echo $buyMyWatchLink ?>">Buy My Watch</a></li>
       </ul>
     </div>
   </div>

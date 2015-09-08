@@ -125,6 +125,17 @@
               <?php } ?>
             </div>
           </div>
+          <?php if(isset($rfq)){ ?>
+             <div class="form-group required">
+               <label class="col-sm-2 control-label" for="input-name">Image File</label>
+               <div class="col-sm-10">
+                  <input type="file" name="uploaded_file">
+                  <?php if ($error_upload) { ?>
+                    <div class="text-danger"><?php echo $error_upload; ?></div>
+                  <?php } ?>
+               </div>
+             </div>
+          <?php } ?>
           <div class="form-group required">
             <label class="col-sm-2 control-label" for="input-enquiry"><?php echo $entry_enquiry; ?></label>
             <div class="col-sm-10">
@@ -146,6 +157,9 @@
         <?php } ?>
         <?php if(isset($product_link)) { ?>
            <input type="hidden" name="product_link" value="<?php echo $product_link ?>" />
+        <?php } ?>
+        <?php if(isset($rfq)){ ?>
+            <input type="hidden" name="rfq" value="1" />
         <?php } ?>
       </form>
       <?php echo $content_bottom; ?></div>
