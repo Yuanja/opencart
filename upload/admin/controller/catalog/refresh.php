@@ -173,29 +173,18 @@ class ControllerCatalogRefresh extends Controller {
 			mkdir(DOWNLOAD_DIR, 0777);
 		}
 		$returnImagePathArray = array();
-		array_push($returnImagePathArray, $this->downloadImage('web_image_path_1', 1, $changedRecordReg));
+		array_push($returnImagePathArray, $this->downloadImage('web_image_path_1', $changedRecordReg));
 
 		return array_filter($returnImagePathArray);
 	}
 	
-	private function downloadImage($imageElement, $countOrder, $changedRecordReg){
+	private function downloadImage($imageElement, $changedRecordReg){
 		//get the pics.
 		if (!empty($changedRecordReg->get($imageElement))){
 			//Figure out the image name
-			$imageName = $changedRecordReg->get('web_designer')."_"
-					.$changedRecordReg->get('web_watch_model')."_"
-					.$changedRecordReg->get('web_watch_year')."_"
-					.$changedRecordReg->get('web_serial_number')."_"
-					.$changedRecordReg->get('web_watch_manufacturer_reference_number')."_".$countOrder.".jpg";
-			$imageName = utf8_encode($imageName);
-			$imageName = str_replace("/", "_", $imageName);
-			$imageName = str_replace(" ", "_", $imageName);
-			//$what   = "\\x00-\\x7F";    //all white-spaces and control chars
-			//$imageName = trim( preg_replace( "/[".$what."]+/" , "" , $imageName ) , $what );
-			
+			$image_name = $changedRecordReg->get("web_tag_number")."jpg";
 				
 			$imageOutUrlPath = IMAGE_URL_BASE."/".$imageName;;
-			$this->load->model('tool/image');
 			
 			try{
 				$image1Url = $changedRecordReg->get($imageElement);
@@ -551,16 +540,16 @@ class ControllerCatalogRefresh extends Controller {
 				$products = $this->model_catalog_product->getProducts($filter_data);
 				
 				if (!$products){
-					$this->echoFlush("web_tag_number: ".$web_item_number." is new.<br>name: ".$recordReg->get("web_description_short"));
+					$this->echoFlush("NEW web_tag_number: ".$web_item_number." : ".$recordReg->get("web_description_short"));
 					$changedRecord[$index] = $recordReg;
 					$index += 1;
 				} elseif ($products && $this->hasChanged($products[0], $recordReg)){
-					$this->echoFlush("web_tag_number: ".$web_item_number." has changed.<br>");
+					$this->echoFlush("CHANGED web_tag_number: ".$web_item_number." : ".$recordReg->get("web_description_short"));
 					$changedRecord[$index] = $recordReg;
 					$recordReg->set('current_product', $products[0] );
 					$index += 1;
 				} else {
-					$this->echoFlush("web_tag_number: ".$web_item_number." = ".$products[0]['product_id']." has not changed.<br>");
+					$this->echoFlush("NO CHANGES DETECTED web_tag_number: ".$web_item_number." : ".$recordReg->get("web_description_short"));
 				}
 			}
 		}
