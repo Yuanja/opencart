@@ -41,7 +41,16 @@
 <body class="<?php echo $class; ?>">
 <nav id="top">
   <div class="container">
-    <?php echo $language; ?>
+    <div id="top-links" class="nav pull-right">
+      </ul class="list-inline">
+        <li class="dropdown"><a href="<?php echo $buyMyWatchLink ?>"><b>We Buy Watches!</b></a></li>
+      </ul>
+    </div>
+    <div id="top-links" class="nav pull-left">
+      <ul class="list-inline">
+        <li><a href="<?php echo $contact; ?>"><i class="fa fa-phone"></i></a> <span class="hidden-xs hidden-sm hidden-md"><?php echo $telephone; ?></span></li>
+      </ul>
+    </div>
 <!-- 
     <div id="top-links" class="nav pull-right">
       <ul class="list-inline">
@@ -58,13 +67,7 @@
         </li>
       </ul>
     </div>
-    
     -->
-    <div id="top-links" class="nav pull-left">
-        </ul class="list-inline">
-         <li class="dropdown"><a href="<?php echo $buyMyWatchLink ?>">Buy My Watch</a></li>
-      </ul>
-    </div>
   </div>
 </nav>
 <header id='logo'>
@@ -82,13 +85,11 @@
       </div>
       <div class="col-sm-4"></div>
     </div>
-    <?php if ($logged) { ?>
     <div class="row">
       <div class="col-sm-8"></div>
       <div class="col-sm-4"><?php echo $search; ?>
       </div>
     </div>
-    <?php } ?>
   </div>
 </header>
 <?php if ($categories) { ?>

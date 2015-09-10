@@ -31,14 +31,16 @@
                      <div class="entry">
                      <form method="post" action="<?php echo $enquire_link ?>"> 
                      <table> 
+                        <tr> <td valign="top"> <label for="name">Name *</label> </td> </tr>
+                        <tr> <td valign="top"> <input type="text" name="name"/></td> </tr>
+                        <tr> <td valign="top"> <label for="email">Email *</label> </td> </tr>
+                        <tr> <td valign="top"> <input type="text" name="email"/></td> </tr>
                         <tr> <td valign="top"> <label for="comments">Message *</label> </td> </tr>
                         <tr> <td valign="top"> <textarea name="enquiry" maxlength="1000" cols="25" rows="6"></textarea> </td> </tr> 
                         <tr> <td colspan="2" style="text-align:center"> <input type="submit" value="Submit"> </td> </tr> 
                      </table>
                      <input type="hidden" name="product_name" value="<?php echo $product['name'] ?>"/>
                      <input type="hidden" name="product_link" value="<?php echo $product['href'] ?>"/>
-                     <input type="hidden" name="name" value="<?php echo $customer->getFirstName() ?>"/>
-                     <input type="hidden" name="email" value="<?php echo $customer->getEmail() ?>"/>
                      </form>
                      </div> 
                   </div> 

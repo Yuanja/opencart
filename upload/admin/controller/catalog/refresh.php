@@ -85,13 +85,7 @@ class ControllerCatalogRefresh extends Controller {
 						'timeout' => 1200,  //1200 Seconds is 20 Minutes
 				)
 		));
-		//$xmlRaw = file_get_contents(FEED_URL, false, $ctx);
-		//$xmlRaw = file_get_contents(FEED_URL);
-		//$xmlRaw = $this->curl_file_get_contents(FEED_URL);
-		
-		//$xml = simplexml_load_file("/Users/jyuan/Documents/opencart-2.0.3.1/upload/fmresultset.xml") or die("fmresultset.xml can't be opened.");
-		//$xmlRaw = $this->url_get_contents();
-		
+		$this->url_get_contents('tmpout.xml');
 		$xml = simplexml_load_file('tmpout.xml');
 		$recordValueRegArray = $this->getRecordValueRegArray($xml);
 		$changedRecordsRegArray = $this->getChangedRecordsArray($recordValueRegArray);
@@ -101,11 +95,11 @@ class ControllerCatalogRefresh extends Controller {
 		$this->echoFlush("End processing!");
 	}
 
-	private function url_get_contents() {
+	private function url_get_contents($outFile) {
 		if (!function_exists('curl_init')){
 			die('CURL is not installed!');
 		}
-		$fp = fopen('tmpout.xml', 'w');
+		$fp = fopen($outFile, 'w');
 		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, FEED_URL);
@@ -178,9 +172,7 @@ class ControllerCatalogRefresh extends Controller {
 			mkdir(DOWNLOAD_DIR, 0777);
 		}
 		$returnImagePathArray = array();
-		array_push($returnImagePathArray, $this->downloadImage('web_image_1', 1, $changedRecordReg));
-		array_push($returnImagePathArray, $this->downloadImage('web_image_2', 1, $changedRecordReg));
-		array_push($returnImagePathArray, $this->downloadImage('web_image_3', 1, $changedRecordReg));
+		array_push($returnImagePathArray, $this->downloadImage('web_image_path_1', 1, $changedRecordReg));
 
 		return array_filter($returnImagePathArray);
 	}
@@ -205,7 +197,8 @@ class ControllerCatalogRefresh extends Controller {
 			$this->load->model('tool/image');
 			
 			try{
-				$image1Url = SOURCE_IP.$changedRecordReg->get($imageElement);
+				//$image1Url = SOURCE_IP.$changedRecordReg->get($imageElement);
+				$image1Url = $changedRecordReg->get($imageElement);
 				$imageFilePath = DOWNLOAD_DIR."/".$imageName;
 				$this->echoFlush("Downloading images from: ".$image1Url."...");
 				$rawImageFromUrl = file_get_contents($image1Url);
@@ -539,42 +532,7 @@ class ControllerCatalogRefresh extends Controller {
 			return (string)$in_string;
 		}
 	}
-	
-	private function mergeProductUpdate($current_proudct, $changedRecordReg){
-		$this->echoFlush("merging ".$current_product['product_id']." with ".$changedRecordReg->get('web_tag_number')."<br>");
-		$this->db->query("UPDATE " . DB_PREFIX 
-				. "product SET model = '" . $this->db->escape($changedRecordReg->get('model')) 
-				. "', manufacturer_id = '" . (int)$this->db->escape($changedRecordReg->get('manufacturer_id'))  
-				. "', price = '" . (float)$this->db->escape($changedRecordReg->get('price'))
-				. "', date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
-		
-		$this->db->query("UPDATE ". DB_PREFIX
-				. "product_description SET name = '". $this->db->escape($changedRecordReg->get('web_description_short'))."'"
-				. " WHERE product_id = '". (int)$product_id."'"
-				. " AND language = '1'"
-				);
-	}
-	
-	private function gen_value_clause($db_column_name, $existing_value, $new_value){
-		if (isset($existing_value) && isset($new_value)){
-			return get_new_value_if_changed($existing_value, $new_value, $db_column_name);
-		} elseif (isset($existing_value) && !isset($new_value)){	
-			return $db_column_name;
-		} elseif (!isset($existing_value) && !isset($new_value)) {
-			return $db_column_name;
-		} else {
-			return $new_value;
-		}
-	}
-	
-	private function get_new_value_if_changed($existing_value, $new_value, $db_columnname){
-		if (strcmp($existing_value, $new_value)){
-			return $new_value;
-		} else {
-			return $db_column_name;
-		}
-	}
-	
+
 	private function getChangedRecordsArray($recordValueRegArray){
 		$this->echoFlush("Detecting changes...");
 		

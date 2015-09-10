@@ -273,9 +273,7 @@ class ControllerInformationContact extends Controller {
 			$this->error['enquiry'] = $this->language->get('error_enquiry');
 		}
 		
-		$name_of_uploaded_file =
-		    basename($_FILES['uploaded_file']['name']);
-		if(isset($name_of_uploaded_file)){
+		if(isset($_FILES['uploaded_file']['name'])){
 			//get the file extension of the file
 			$type_of_uploaded_file =
 			    substr($name_of_uploaded_file,
