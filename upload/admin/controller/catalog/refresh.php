@@ -85,8 +85,8 @@ class ControllerCatalogRefresh extends Controller {
 						'timeout' => 1200,  //1200 Seconds is 20 Minutes
 				)
 		));
-		$this->url_get_contents('tmpout.xml');
-		$xml = simplexml_load_file('tmpout.xml');
+		$this->url_get_contents('/tmp/tmpout.xml');
+		$xml = simplexml_load_file('/tmp/tmpout.xml');
 		$recordValueRegArray = $this->getRecordValueRegArray($xml);
 		$changedRecordsRegArray = $this->getChangedRecordsArray($recordValueRegArray);
 		$this->saveChangedRecords($changedRecordsRegArray);		
