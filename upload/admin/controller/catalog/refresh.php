@@ -99,7 +99,9 @@ class ControllerCatalogRefresh extends Controller {
 		if (!function_exists('curl_init')){
 			die('CURL is not installed!');
 		}
+		$this->echoFlush("CURL installed and reading...");
 		$fp = fopen($outFile, 'w');
+		$this->echoFlush("opened: ".$outFile." for writting.");
 		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, FEED_URL);
