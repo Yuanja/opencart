@@ -99,9 +99,8 @@ class ControllerCatalogRefresh extends Controller {
 		if (!function_exists('curl_init')){
 			die('CURL is not installed!');
 		}
-		$this->echoFlush("CURL installed and reading...");
 		$fp = fopen($outFile, 'w');
-		$this->echoFlush("opened: ".$outFile." for writting.");
+		$this->echoFlush("url_get_contents opened: ".$outFile." for writting.");
 		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -113,7 +112,7 @@ class ControllerCatalogRefresh extends Controller {
 		$output = curl_exec($ch);
 		curl_close($ch);
 		fclose($fp);
-		return $output;
+		$this->echoFlush("url_get_contents completed.");
 	}
 	
 	private function downloadFeed(){
@@ -205,9 +204,9 @@ class ControllerCatalogRefresh extends Controller {
 				
 				$this->url_get_contents($imageFilePath, $image1Url);
 				
-				$this->echoFlush("Writing images to: ".$imageOutUrlPath."...");
+				$this->echoFlush("Success! Image url for product: ".$imageOutUrlPath."...");
 			} catch (ErrorException $e){
-				$this->echoFlush("Downloading images from: ".$image1Url."... FAILED.".$e->getTraceAsString());
+				$this->echoFlush("FAILED to download images from: ".$image1Url."... .".$e->getTraceAsString());
 				$imageOutUrlPath = "no_image.png";
 			}
 				
