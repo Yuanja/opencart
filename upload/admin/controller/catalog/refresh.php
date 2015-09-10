@@ -182,7 +182,7 @@ class ControllerCatalogRefresh extends Controller {
 		//get the pics.
 		if (!empty($changedRecordReg->get($imageElement))){
 			//Figure out the image name
-			$image_name = $changedRecordReg->get("web_tag_number")."jpg";
+			$image_name = $changedRecordReg->get('web_tag_number').".jpg";
 				
 			$imageOutUrlPath = IMAGE_URL_BASE."/".$imageName;;
 			
