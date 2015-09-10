@@ -85,7 +85,7 @@ class ControllerCatalogRefresh extends Controller {
 						'timeout' => 1200,  //1200 Seconds is 20 Minutes
 				)
 		));
-		$this->url_get_contents('/tmp/tmpout.xml');
+		$this->url_get_contents('/tmp/tmpout.xml', FEED_URL);
 		$xml = simplexml_load_file('/tmp/tmpout.xml');
 		$recordValueRegArray = $this->getRecordValueRegArray($xml);
 		$changedRecordsRegArray = $this->getChangedRecordsArray($recordValueRegArray);
@@ -95,7 +95,7 @@ class ControllerCatalogRefresh extends Controller {
 		$this->echoFlush("End processing!");
 	}
 
-	private function url_get_contents($outFile) {
+	private function url_get_contents($outFile, $url) {
 		if (!function_exists('curl_init')){
 			die('CURL is not installed!');
 		}
@@ -104,7 +104,7 @@ class ControllerCatalogRefresh extends Controller {
 		$this->echoFlush("opened: ".$outFile." for writting.");
 		
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, FEED_URL);
+		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 30000);
@@ -199,15 +199,15 @@ class ControllerCatalogRefresh extends Controller {
 			$this->load->model('tool/image');
 			
 			try{
-				//$image1Url = SOURCE_IP.$changedRecordReg->get($imageElement);
 				$image1Url = $changedRecordReg->get($imageElement);
 				$imageFilePath = DOWNLOAD_DIR."/".$imageName;
 				$this->echoFlush("Downloading images from: ".$image1Url."...");
-				$rawImageFromUrl = file_get_contents($image1Url);
-				file_put_contents($imageFilePath, $rawImageFromUrl);
+				
+				$this->url_get_contents($imageFilePath, $image1Url);
+				
 				$this->echoFlush("Writing images to: ".$imageOutUrlPath."...");
 			} catch (ErrorException $e){
-				$this->echoFlush("Downloading images from: ".$imageOutUrlPath."... FAILED.".$e->getTraceAsString());
+				$this->echoFlush("Downloading images from: ".$image1Url."... FAILED.".$e->getTraceAsString());
 				$imageOutUrlPath = "no_image.png";
 			}
 				
