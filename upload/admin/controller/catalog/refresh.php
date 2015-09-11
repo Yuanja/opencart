@@ -18,16 +18,26 @@ class ControllerCatalogRefresh extends Controller {
 			"Rolex" => 1,
 			"Patek Philippe" => 2,
 			"Cartier" => 3,
-			"A. Lange & Sohne" => 4,
-			"Panerai" => 5,
-			"Audemars Piguet" => 6,
-			"Piaget" => 7,
-			"Breguet" => 8,
-			"Hublot" => 9,
-			"Omega" => 10,
-			"Vacheron Constantin" => 11,
+			"Panerai" => 4,
+			"Audemars Piguet" => 5,
+			"Vacheron Constantin" => 6,
+			"Hublot" => 7,
+			"Omega" => 8,
+			"Breitling" => 9,
+			"A. Lange & Sohne" => 10,
+			"Piaget" => 11,
 			"Other Brands" => 12000
 		);
+	
+	private $otherBrands = array(
+		"Abercrombie & Fitch", "Alain Silberstein", "Betteridge", "Boucheron","Bucherer","Bueche Girod","Carl Bucherer",
+			"Poiray", "Revue", "Sarcar", "Swatch", "Swiss", "Tabbah", "TechnoMarine", "Tiffany & Co.", "Tourneau", 
+			"Tri Complax", "Universal Geneve", "Versace", "Voltaire", "Waltham", "De Beers", "Desage", "Dunhill", 
+			"Elgin", "Eska", "European Company Watch", "Faberge", "Fred", "Geneve", "Gerald Genta", "Gevril",  
+			"Graham", "Gucci", "Hamilton", "Hammerman", "Jules Jurgensen", "Juvenia", "Laykinetcie", "LeCoultre",
+			"Meiral", "Movado", "Opera Meccana", "Pierre Kunz"
+	);
+	
 	
 	public function index() {
 		$this->turnWarningIntoExceptions();
@@ -301,20 +311,23 @@ class ControllerCatalogRefresh extends Controller {
 	}
 	
 	private function getAllUniqueCategoryIds($changedRecordReg){
+
+		
 		$brand = $changedRecordReg->get('web_designer');
 		$model = !empty($changedRecordReg->get('web_watch_model')) ? $changedRecordReg->get('web_watch_model') : "Other Models";
-
-		//Create the make->model cats
-		$brandModelCategory = $this->ensureCategories(
-				$brand.CATEGORY_DELIMETER.$model);
+		$otherBrandCategory = array();
+		$brandModelCategory = array();
 		
-		$allOtherCatg = array();
 		//Create the All Other Watches ->make->model
-		if (!in_array($brand, $this->allowedTopCategoryNames)){
-			$allOtherCatg = $this->ensureCategories("Other Brands".CATEGORY_DELIMETER.$brand.CATEGORY_DELIMETER.$model);
+		if (in_array($brand, $this->otherBrands)){
+			$otherBrandCategory = $this->ensureCategories("Other Brands");
+		} else {
+			//Create the make->model cats
+			$brandModelCategory = $this->ensureCategories(
+					$brand.CATEGORY_DELIMETER.$model);
 		}
 
-		$allCats = array_merge($brandModelCategory, $allOtherCatg );
+		$allCats = array_merge($brandModelCategory, $otherBrandCategory );
 		return array_unique($allCats);
 		
 	}
