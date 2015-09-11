@@ -42,13 +42,13 @@
 <nav id="top">
   <div class="container">
     <div id="top-links" class="nav pull-right">
-      </ul class="list-inline">
-        <li class="dropdown"><a href="<?php echo $buyMyWatchLink ?>"><b>We Buy Watches!</b></a></li>
+      <ul class="list-inline">
+        <li class="dropdown"><a href="<?php echo $buyMyWatchLink ?>"><p style="font-size: large; color:red">We Buy Watches and Take Trade-Ins!</p></a></li>
       </ul>
     </div>
     <div id="top-links" class="nav pull-left">
       <ul class="list-inline">
-        <li><a href="<?php echo $contact; ?>"><i class="fa fa-phone"></i></a> <span class="hidden-xs hidden-sm hidden-md"><?php echo $telephone; ?></span></li>
+        <li><a href="<?php echo $contact; ?>"><span style="font-size: large">CALL US <?php echo $telephone; ?></span></a></li>
       </ul>
     </div>
 <!-- 
