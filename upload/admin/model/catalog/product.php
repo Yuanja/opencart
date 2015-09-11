@@ -703,7 +703,7 @@ class ModelCatalogProduct extends Model {
 	
 	public function updateFeaturedPrduct(){
 		$topProduct = array();
-		$query = $this->db->query("SELECT product_id from " . DB_PREFIX . "product order by sku desc LIMIT 10 ");
+		$query = $this->db->query("SELECT product_id from " . DB_PREFIX . "product order by sku desc LIMIT 50 ");
 		foreach ($query->rows as $result){
 			$topProduct[] = "\"".(string)$result['product_id']."\"";
 		}

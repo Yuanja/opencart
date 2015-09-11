@@ -216,17 +216,14 @@ class ControllerCatalogRefresh extends Controller {
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_model", "Model", 20, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_manufacturer_reference_number", "Ref:", 23, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_year", "Year", 30, $changedRecordReg));
-		//array_push($productAttributes, $this->getAttributeArrayElement("web_serial_number", "Serial Number", 40, $changedRecordReg));
-		//array_push($productAttributes, $this->getAttributeArrayElement("web_case_serial_number", "Case Serial Number", 50, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_diameter", "Diameter", 51, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_movement", "Movement", 55, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_complications", "Complications", 60, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_case", "Case", 70, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_dial", "Dial", 80, $changedRecordReg));
-		//array_push($productAttributes, $this->getAttributeArrayElement("web_watch_strap", "Strap", 90, $changedRecordReg));
-		//array_push($productAttributes, $this->getAttributeArrayElement("web_watch_buckle", "Buckle", 100, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_box_papers", "Box Paper", 110, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_condition", "Condition", 120, $changedRecordReg));
+		array_push($productAttributes, $this->getAttributeArrayElement("web_tag_number", "Sku", 125, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_price_retail", "Retail Price", 130, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_price_sale", "Sale Price", 140, $changedRecordReg));
 		

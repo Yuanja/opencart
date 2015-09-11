@@ -104,7 +104,7 @@
                     <?php foreach ($attribute_group['attribute'] as $attribute) { ?>
                     <tr>
                       <td><?php echo $attribute['name']; ?></td>
-                      <?php if ($attribute['name'] == 'Price Retail') { ?>
+                      <?php if ($attribute['name'] == 'Retail Price') { ?>
                         <td><b><span style="text-decoration: line-through;"><?php echo $attribute['text']; ?></span></b></td>
                       <?php } elseif ($attribute['name'] == 'Sale Price') { ?>
                         <td><b><?php echo $attribute['text']; ?></b></td>

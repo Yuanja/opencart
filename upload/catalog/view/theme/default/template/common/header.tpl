@@ -48,7 +48,7 @@
     </div>
     <div id="top-links" class="nav pull-left">
       <ul class="list-inline">
-        <li><a href="<?php echo $contact; ?>"><span style="font-size: large">CALL US <?php echo $telephone; ?></span></a></li>
+        <li><a href="<?php echo $contact; ?>"><span style="font-size: large; color:white">CALL US <?php echo $telephone; ?></span></a></li>
       </ul>
     </div>
 <!-- 

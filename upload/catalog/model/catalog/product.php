@@ -164,7 +164,7 @@ class ModelCatalogProduct extends Model {
 				$sql .= " ORDER BY " . $data['sort'];
 			}
 		} else {
-			$sql .= " ORDER BY p.sort_order";
+			$sql .= " ORDER BY p.sku";
 		}
 
 		if (isset($data['order']) && ($data['order'] == 'DESC')) {
@@ -303,12 +303,12 @@ class ModelCatalogProduct extends Model {
 			$product_attribute_query = $this->db->query("SELECT a.attribute_id, ad.name, pa.text FROM " . DB_PREFIX . "product_attribute pa LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (a.attribute_id = ad.attribute_id) WHERE pa.product_id = '" . (int)$product_id . "' AND a.attribute_group_id = '" . (int)$product_attribute_group['attribute_group_id'] . "' AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "' AND pa.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY a.sort_order, ad.name");
 
 			foreach ($product_attribute_query->rows as $product_attribute) {
-				if ($product_attribute['name'] == 'Price Retail' || 
+				if ($product_attribute['name'] == 'Retail Price' || 
 						$product_attribute['name'] == 'Sale Price' ){
 					$product_attribute_data[] = array(
 							'attribute_id' => $product_attribute['attribute_id'],
 							'name'         => $product_attribute['name'],
-							'text'         => $this->currency->format($product_attribute['text'])
+							'text'         => str_replace(".00", "", $this->currency->format($product_attribute['text']))
 					);
 				} else {
 					$product_attribute_data[] = array(
