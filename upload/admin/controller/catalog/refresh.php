@@ -321,7 +321,7 @@ class ControllerCatalogRefresh extends Controller {
 		$brandModelCategory = array();
 		
 		//Create the All Other Watches ->make->model
-		if (in_array($brand, $this->otherBrands)){
+		if (in_array($brand, $this->otherBrands) || !empty($brand)){
 			$otherBrandCategory = $this->ensureCategories("Other Brands");
 		} else {
 			//Create the make->model cats
