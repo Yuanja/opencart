@@ -99,7 +99,8 @@ class ControllerCatalogRefresh extends Controller {
 		$xml = simplexml_load_file('/tmp/tmpout.xml');
 		$recordValueRegArray = $this->getRecordValueRegArray($xml);
 		$changedRecordsRegArray = $this->getChangedRecordsArray($recordValueRegArray);
-		$this->saveChangedRecords($changedRecordsRegArray);		
+		$this->saveChangedRecords($changedRecordsRegArray);
+		$this->deleteProductNotInFeed($recordValueRegArray);
 		//update featured/recently added
 		$this->updateFeaturedProducts();
 		$this->echoFlush("End processing!");
@@ -168,10 +169,10 @@ class ControllerCatalogRefresh extends Controller {
 			$allProductImages = $this->ensureImages($changedRecordReg);
 			$current_product = $changedRecordReg->get('current_product');
 			if($current_product){
-				$this->echoFlush("Merging product id: ".$current_product['product_id']);
+				$this->echoFlush("Replacing product id: ".$current_product['product_id']);
 				//delete
 				$this->load->model('catalog/product');
-				$this->model_catalog_proudct->deleteProduct($current_product['product_id']);
+				$this->model_catalog_product->deleteProduct($current_product['product_id']);
 			}
 			$this->insertNewProduct($changedRecordReg, $allCategoryIds, $allProductAttributes, $allProductImages);
 		}
@@ -231,7 +232,7 @@ class ControllerCatalogRefresh extends Controller {
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_complications", "Complications", 60, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_case", "Case", 70, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_dial", "Dial", 80, $changedRecordReg));
-		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_box_papers", "Box Paper", 110, $changedRecordReg));
+		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_box_papers", "Box and Papers", 110, $changedRecordReg, "None"));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_watch_condition", "Condition", 120, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_tag_number", "Sku", 125, $changedRecordReg));
 		array_push($productAttributes, $this->getAttributeArrayElement("web_price_retail", "Retail Price", 130, $changedRecordReg));
@@ -241,9 +242,10 @@ class ControllerCatalogRefresh extends Controller {
 		return array_filter($productAttributes);
 	}
 	
-	private function getAttributeArrayElement($feedElementKey, $attributeName, $sortOrder, $changedRecordReg){
-		if (!empty($changedRecordReg->get($feedElementKey))){
-			$value = $changedRecordReg->get($feedElementKey);
+	private function getAttributeArrayElement($feedElementKey, $attributeName, $sortOrder, $changedRecordReg, $defaultValue = NULL){
+		$value = !empty($changedRecordReg->get($feedElementKey))? $changedRecordReg->get($feedElementKey) : $defaultValue;
+		
+		if (!empty($value)){
 			if ($feedElementKey == "web_price_sale" || $feedElementKey == "web_price_retail"){
 				$value = (float)str_replace("$", "", $value);
 				if (empty($value) ){
@@ -564,6 +566,36 @@ class ControllerCatalogRefresh extends Controller {
 			}
 		}
 		return $changedRecord;
+	}
+	
+	private function deleteProductNotInFeed($recordValueRegArray){
+		$this->echoFlush("Detecting products to be removed...");
+		$feedSkuArray = array();
+		$dbSkuArray = array();
+		
+		foreach ($recordValueRegArray as $recordReg){
+			array_push($feedSkuArray, $recordReg->get('web_tag_number'));
+		}
+		
+		$this->load->model('catalog/product');
+		$allProducts = $this->model_catalog_product->getProducts(array());
+		
+		foreach ($allProducts as $productInDb){
+			array_push($dbSkuArray, $productInDb['sku']);
+		}
+		
+		$toDeleteSkuArray = array_diff($dbSkuArray, $feedSkuArray);
+		
+		foreach ($toDeleteSkuArray as $delProductSku){
+			$filter_data = array(
+					'filter_web_item_number'	  => $delProductSku,
+			);
+			$products = $this->model_catalog_product->getProducts($filter_data);
+			foreach ($products as $productToDelete){
+				$this->echoFlush("Deleting product id: ".$productToDelete['product_id']." sku: ".$delProductSku);
+				$this->model_catalog_product->deleteProduct($productToDelete['product_id']);
+			}
+		}
 	}
 	
 	private function hasChanged($product, $recordReg){
