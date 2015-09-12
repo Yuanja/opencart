@@ -18,12 +18,6 @@
           <li><a href="<?php echo $return; ?>"><?php echo $text_return; ?></a></li>
         </ul>
       </div>
-      <div class="col-sm-3">
-        <h5><?php echo $text_account; ?></h5>
-        <ul class="list-unstyled">
-          <li><a href="<?php echo $account; ?>"><?php echo $text_account; ?></a></li>
-        </ul>
-      </div>
     </div>
     <hr>
   </div>
