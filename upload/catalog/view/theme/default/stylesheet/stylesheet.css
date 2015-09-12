@@ -79,7 +79,7 @@ div.required .control-label:before {
 }
 /* top */
 #top {
-	background-color: black;
+	background-color: #303030;
 	border-bottom: 1px solid #e2e2e2;
 	padding: 4px 0px 3px 0;
 	margin: 0 0 20px 0;
