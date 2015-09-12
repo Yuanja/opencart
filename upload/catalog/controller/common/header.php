@@ -108,22 +108,22 @@ class ControllerCommonHeader extends Controller {
 
 		//Justin just wants 10 at any time.  Filter is here:
 		$allowedTopCategoryNames = array(
-			"Rolex",
-			"Patek Philippe",
-			"Cartier",
-			"A. Lange & Sohne",
-			"Panerai",
-			"Audemars Piguet",
-			"Piaget",
-			"Breguet",
-			"Hublot",
-			"Omega",
-			"Vacheron Constantin",
-			"Other Brands"
+			"Rolex" => 1,
+			"Patek Philippe" => 2,
+			"Cartier" => 3,
+			"Panerai" => 4,
+			"Audemars Piguet" => 5,
+			"Vacheron Constantin" => 6,
+			"Hublot" => 7,
+			"Omega" => 8,
+			"Breitling" => 9,
+			"A. Lange & Sohne" => 10,
+			"Piaget" => 11,
+			"Other Brands" => 12000
 		);
-
+		
 		foreach ($categories as $category) {
-			if ($category['top'] && in_array($category['name'], $allowedTopCategoryNames)) {
+			if ($category['top'] && in_array($category['name'], array_keys($allowedTopCategoryNames))) {
 				// Level 2
 				$children_data = array();
 
