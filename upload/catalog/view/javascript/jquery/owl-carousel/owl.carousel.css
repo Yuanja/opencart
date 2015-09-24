@@ -131,3 +131,7 @@
 .owl-controls .owl-page.active span {
 	background: rgba(0, 0, 0, 0.9);
 }
+
+.owl-item .item img {
+	margin: 0 auto;
+}
