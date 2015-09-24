@@ -62,6 +62,7 @@ class ControllerModuleFeatured extends Controller {
 					$data['enquire_link'] = $this->url->link('information/contact');
 					$data['customer'] = $this->customer;
 
+					
 					$data['products'][] = array(
 						'product_id'  => $product_info['product_id'],
 						'thumb'       => $image,
@@ -72,7 +73,8 @@ class ControllerModuleFeatured extends Controller {
 						'tax'         => $tax,
 						'rating'      => $rating,
 						'href'        => $this->url->link('product/product', 'product_id=' . $product_info['product_id']),
-						'attribute_groups' => $attribute_groups
+						'attribute_groups' => $attribute_groups,
+						'stock_status' => $product_info['stock_status']
 					);
 				}
 			}

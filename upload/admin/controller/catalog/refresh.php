@@ -424,6 +424,7 @@ class ControllerCatalogRefresh extends Controller {
 		$manufacture_id = $this->ensureManufacturerId($changedRecordReg->get("web_designer"));
 		
 		//Take the first one as Image for the product home.  TODO: potentially tweak this more consistent.
+		$stock_status_id = $changedRecordReg->get("web_status") == "Available" ? "7" : "8";
 		$this->db->query("INSERT INTO " . DB_PREFIX . "product ". 
 				"SET model = '" .$this->db->escape($this->getNonNullString($changedRecordReg->get("web_watch_model"))). "', " 
 				."sku = '" .$this->db->escape($this->getNonNullString($changedRecordReg->get("web_tag_number"))). "', " 
@@ -436,7 +437,7 @@ class ControllerCatalogRefresh extends Controller {
 				."quantity = '1', "  
 				."minimum = '1', " 
 				."subtract = '0', " 
-				."stock_status_id = '7', " 
+				."stock_status_id = '".$stock_status_id."', "
 				."date_available = NOW(), "  
 				."manufacturer_id = '" . (int)$manufacture_id ."', " 
 				."shipping = '0', "  
@@ -603,6 +604,15 @@ class ControllerCatalogRefresh extends Controller {
 			return true;
 		}
 		
+		$product_stock_status = $product['stock_status_id'];
+		$web_status = $recordReg->get('web_status');
+		
+		if (($web_status == "Available" && $product_stock_status != 7) ||
+			 ($web_status == "Memo" && $product_stock_status != 8))
+		{
+			return true;
+		}
+		
 		$product_id = $product['product_id'];
 		$product_descs = $this->model_catalog_product->getProductDescriptions($product_id);
 		if ($product_descs){
@@ -639,8 +649,13 @@ class ControllerCatalogRefresh extends Controller {
 				foreach ($xmlRecord->children() as $field){
 					$fieldValueReg->set((string)$field['name'], (string)$field->data);
 				}
-				$recordValues[$recordIndex] = $fieldValueReg;
-				$recordIndex += 1;;
+				
+				//Filter out item_status with sold or void.
+				$web_status = $fieldValueReg->get('web_status');
+				if (isset($web_status) && ($web_status != "Available" || $web_status != "Memo")){
+					$recordValues[$recordIndex] = $fieldValueReg;
+					$recordIndex += 1;;
+				}
 			}
 			return $recordValues;
 		} else {

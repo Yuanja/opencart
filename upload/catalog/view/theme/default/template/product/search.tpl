@@ -121,7 +121,11 @@
                       <?php if ($attribute['name'] == 'Retail Price') { ?>
                         <td><b><span style="text-decoration: line-through;"><?php echo $attribute['text']; ?></span></b></td>
                       <?php } elseif ($attribute['name'] == 'Sale Price') { ?>
-                        <td><b><?php echo $attribute['text']; ?></b></td>
+                        <?php if ($product['stock_status'] == 'In Stock') { ?>
+                           <td><b><?php echo $attribute['text']; ?></b></td>
+                        <?php } else { ?>
+                           <td><b>On Hold</b></td>
+                        <?php } ?>
                       <?php } else { ?>
                         <td><b><?php echo $attribute['text']; ?></b></td>
                       <?php } ?>
