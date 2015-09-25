@@ -652,7 +652,7 @@ class ControllerCatalogRefresh extends Controller {
 				
 				//Filter out item_status with sold or void.
 				$web_status = $fieldValueReg->get('web_status');
-				if (isset($web_status) && ($web_status != "Available" || $web_status != "Memo")){
+				if (isset($web_status) && ($web_status == "Available" || $web_status == "Memo")){
 					$recordValues[$recordIndex] = $fieldValueReg;
 					$recordIndex += 1;;
 				}
