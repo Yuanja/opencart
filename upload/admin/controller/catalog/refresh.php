@@ -174,7 +174,8 @@ class ControllerCatalogRefresh extends Controller {
 				$this->load->model('catalog/product');
 				$this->model_catalog_product->deleteProduct($current_product['product_id']);
 			}
-			$this->insertNewProduct($changedRecordReg, $allCategoryIds, $allProductAttributes, $allProductImages);
+			$newProductId = $this->insertNewProduct($changedRecordReg, $allCategoryIds, $allProductAttributes, $allProductImages);
+			$this->echoFlush("New Product saved, web_record_id: ".$changedRecordReg->get('web_tag_number')." as ProductId: ".$newProductId);
 		}
 	}
 	
@@ -501,6 +502,7 @@ class ControllerCatalogRefresh extends Controller {
 						." sort_order = '" . (int)$product_image['sort_order'] . "'");
 			}
 		}
+		return $product_id;
 	}
 	
 	private function ensureManufacturerId($manufacturer_name){
@@ -562,7 +564,7 @@ class ControllerCatalogRefresh extends Controller {
 					$recordReg->set('current_product', $products[0] );
 					$index += 1;
 				} else {
-					$this->echoFlush("NO CHANGES DETECTED web_tag_number: ".$web_item_number." : ".$recordReg->get("web_description_short"));
+					//$this->echoFlush("NO CHANGES DETECTED web_tag_number: ".$web_item_number." : ".$recordReg->get("web_description_short"));
 				}
 			}
 		}
@@ -598,7 +600,7 @@ class ControllerCatalogRefresh extends Controller {
 			}
 		}
 	}
-	
+
 	private function hasChanged($product, $recordReg){
 		if (!$product){
 			return true;
