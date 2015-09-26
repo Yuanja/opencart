@@ -642,9 +642,10 @@ class ControllerCatalogRefresh extends Controller {
 	private function getRecordValueRegArray($xml){
 		$this->echoFlush("Parsing from source...<br>");
 		if ($xml){
-			$recordIndex = 0;
-			$recordValues = null;
+			$recordByWebIDMap = array();
 			$xmlRecords = $xml->resultset->children();
+			$recordIDList = array(); //This is used to track duplicated record ids in the feed.  
+			
 			foreach ($xmlRecords as $xmlRecord){
 				//Get all fields
 				$fieldValueReg = new Registry();
@@ -654,12 +655,15 @@ class ControllerCatalogRefresh extends Controller {
 				
 				//Filter out item_status with sold or void.
 				$web_status = $fieldValueReg->get('web_status');
+				$web_record_id = $fieldValueReg->get('web_record_id');
 				if (isset($web_status) && ($web_status == "Available" || $web_status == "Memo")){
-					$recordValues[$recordIndex] = $fieldValueReg;
-					$recordIndex += 1;;
+					if(isset($recordByWebIDMap[$web_record_id])){
+						$this->echoFlush("WARNING Duplicate records found! ".$web_record_id);
+					}
+					$recordByWebIDMap[$web_record_id] = $fieldValueReg;
 				}
 			}
-			return $recordValues;
+			return array_values($recordByWebIDMap);
 		} else {
 			return null;
 		}
