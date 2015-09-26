@@ -98,11 +98,16 @@ class ControllerCatalogRefresh extends Controller {
 		$this->url_get_contents('/tmp/tmpout.xml', FEED_URL);
 		$xml = simplexml_load_file('/tmp/tmpout.xml');
 		$recordValueRegArray = $this->getRecordValueRegArray($xml);
-		$changedRecordsRegArray = $this->getChangedRecordsArray($recordValueRegArray);
-		$this->saveChangedRecords($changedRecordsRegArray);
-		$this->deleteProductNotInFeed($recordValueRegArray);
-		//update featured/recently added
-		$this->updateFeaturedProducts();
+		//The feed can fuck up so add safe guard to not accidently delete or change 
+		if (isset($recordValueRegArray) && sizeof($recordValueRegArray) > 0){
+			$changedRecordsRegArray = $this->getChangedRecordsArray($recordValueRegArray);
+			$this->saveChangedRecords($changedRecordsRegArray);
+			$this->deleteProductNotInFeed($recordValueRegArray);
+			//update featured/recently added
+			$this->updateFeaturedProducts();
+		} else {
+			$this->echoFlush("WARNING: Something wrong with the feed size! Nothing read!");
+		}
 		$this->echoFlush("End processing!");
 	}
 
