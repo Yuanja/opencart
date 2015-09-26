@@ -95,7 +95,7 @@ class ControllerCatalogRefresh extends Controller {
 						'timeout' => 1200,  //1200 Seconds is 20 Minutes
 				)
 		));
-//		$this->url_get_contents('/tmp/tmpout.xml', FEED_URL);
+		$this->url_get_contents('/tmp/tmpout.xml', FEED_URL);
 		$xml = simplexml_load_file('/tmp/tmpout.xml');
 		$recordValueRegArray = $this->getRecordValueRegArray($xml);
 		//The feed can fuck up so add safe guard to not accidently delete or change 
