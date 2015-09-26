@@ -95,7 +95,7 @@ class ControllerCatalogRefresh extends Controller {
 						'timeout' => 1200,  //1200 Seconds is 20 Minutes
 				)
 		));
-		$this->url_get_contents('/tmp/tmpout.xml', FEED_URL);
+//		$this->url_get_contents('/tmp/tmpout.xml', FEED_URL);
 		$xml = simplexml_load_file('/tmp/tmpout.xml');
 		$recordValueRegArray = $this->getRecordValueRegArray($xml);
 		//The feed can fuck up so add safe guard to not accidently delete or change 
@@ -180,7 +180,7 @@ class ControllerCatalogRefresh extends Controller {
 				$this->model_catalog_product->deleteProduct($current_product['product_id']);
 			}
 			$newProductId = $this->insertNewProduct($changedRecordReg, $allCategoryIds, $allProductAttributes, $allProductImages);
-			$this->echoFlush("New Product saved, web_record_id: ".$changedRecordReg->get('web_tag_number')." as ProductId: ".$newProductId);
+			$this->echoFlush("New Product saved, web_tag_number: ".$changedRecordReg->get('web_tag_number')." as ProductId: ".$newProductId);
 		}
 	}
 	
@@ -660,12 +660,13 @@ class ControllerCatalogRefresh extends Controller {
 				
 				//Filter out item_status with sold or void.
 				$web_status = $fieldValueReg->get('web_status');
-				$web_record_id = $fieldValueReg->get('web_record_id');
+				$web_tag_number = $fieldValueReg->get('web_tag_number');
 				if (isset($web_status) && ($web_status == "Available" || $web_status == "Memo")){
-					if(isset($recordByWebIDMap[$web_record_id])){
-						$this->echoFlush("WARNING Duplicate records found! ".$web_record_id);
+					if(array_key_exists($web_tag_number, $recordByWebIDMap)){
+						$this->echoFlush("WARNING Duplicate records found! ".$web_tag_number);
+					} else {
+						$recordByWebIDMap[$web_tag_number] = $fieldValueReg;
 					}
-					$recordByWebIDMap[$web_record_id] = $fieldValueReg;
 				}
 			}
 			return array_values($recordByWebIDMap);
