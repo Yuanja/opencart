@@ -319,25 +319,24 @@ class ControllerCatalogRefresh extends Controller {
 	}
 	
 	private function getAllUniqueCategoryIds($changedRecordReg){
-
-		
 		$brand = $changedRecordReg->get('web_designer');
 		$model = !empty($changedRecordReg->get('web_watch_model')) ? $changedRecordReg->get('web_watch_model') : "Other Models";
 		$otherBrandCategory = array();
 		$brandModelCategory = array();
 		
 		//Create the All Other Watches ->make->model
-		if (in_array($brand, $this->otherBrands) || !empty($brand)){
-			$otherBrandCategory = $this->ensureCategories("Other Brands");
-		} else {
-			//Create the make->model cats
-			$brandModelCategory = $this->ensureCategories(
-					$brand.CATEGORY_DELIMETER.$model);
+		if (!empty($brand)){
+			if (in_array($brand, $this->otherBrands)){
+				$otherBrandCategory = $this->ensureCategories("Other Brands");
+			} else {
+				//Create the make->model cats
+				$brandModelCategory = $this->ensureCategories(
+						$brand.CATEGORY_DELIMETER.$model);
+			}
 		}
 
 		$allCats = array_merge($brandModelCategory, $otherBrandCategory );
 		return array_unique($allCats);
-		
 	}
 
 	private function ensureCategories($categoryString){
