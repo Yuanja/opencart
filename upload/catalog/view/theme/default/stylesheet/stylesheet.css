@@ -758,6 +758,6 @@ table tr td {
 /*Make the menu use less space. */
 @media (min-width: 768px){
    .col-sm-3 {
-      width: 20%;
+      width: 18%;
    }
 }
