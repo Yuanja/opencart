@@ -614,7 +614,7 @@ class ControllerCatalogRefresh extends Controller {
 		$web_status = $recordReg->get('web_status');
 		
 		if (($web_status == "Available" && $product_stock_status != 7) ||
-			 ($web_status == "Memo" && $product_stock_status != 8))
+			 ($web_status == "On Memo" && $product_stock_status != 8))
 		{
 			return true;
 		}
@@ -660,7 +660,7 @@ class ControllerCatalogRefresh extends Controller {
 				//Filter out item_status with sold or void.
 				$web_status = $fieldValueReg->get('web_status');
 				$web_tag_number = $fieldValueReg->get('web_tag_number');
-				if (isset($web_status) && ($web_status == "Available" || $web_status == "Memo")){
+				if (isset($web_status) && ($web_status == "Available" || $web_status == "On Memo")){
 					if(array_key_exists($web_tag_number, $recordByWebIDMap)){
 						$this->echoFlush("WARNING Duplicate records found! ".$web_tag_number);
 					} else {
