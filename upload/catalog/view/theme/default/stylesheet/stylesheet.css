@@ -755,3 +755,9 @@ table tr td {
     padding-right: 10px;
 }
 
+/*Make the menu use less space. */
+@media (min-width: 768px){
+   .col-sm-3 {
+      width: 20%;
+   }
+}
