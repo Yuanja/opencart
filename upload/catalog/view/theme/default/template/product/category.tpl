@@ -103,17 +103,21 @@
                   <tbody>
                     <?php foreach ($attribute_group['attribute'] as $attribute) { ?>
                     <tr>
-                      <td><?php echo $attribute['name']; ?></td>
+                      <?php if ($attribute['name'] == 'Sale Price') { ?>
+                        <td><font style="color:red"><b><?php echo $attribute['name']; ?><b></font></td>
+                      <?php } else { ?>
+                        <td><b><?php echo $attribute['name']; ?><b></td>
+                      <?php } ?> 
                       <?php if ($attribute['name'] == 'Retail Price') { ?>
                         <td><b><span style="text-decoration: line-through;"><?php echo $attribute['text']; ?></span></b></td>
                       <?php } elseif ($attribute['name'] == 'Sale Price') { ?>
                         <?php if ($product['stock_status'] == 'In Stock') { ?>
-                           <td><b><?php echo $attribute['text']; ?></b></td>
+                           <td><font style="color:red"><b><?php echo $attribute['text']; ?></b></font></td>
                         <?php } else { ?>
-                           <td><b>On Hold</b></td>
+                           <td>On Hold</td>
                         <?php } ?>
                       <?php } else { ?>
-                        <td><b><?php echo $attribute['text']; ?></b></td>
+                        <td><?php echo $attribute['text']; ?></td>
                       <?php } ?>
                     </tr>
                     <?php } ?>

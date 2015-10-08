@@ -79,7 +79,7 @@
           <label class="control-label" for="input-sort"><?php echo $text_sort; ?></label>
         </div>
         <div class="col-sm-3 text-right">
-          <select id="input-sort" class="form-control col-sm-3" onchange="location = this.value;">
+          <select id="input-sort" class="form-control" onchange="location = this.value;">
             <?php foreach ($sorts as $sorts) { ?>
             <?php if ($sorts['value'] == $sort . '-' . $order) { ?>
             <option value="<?php echo $sorts['href']; ?>" selected="selected"><?php echo $sorts['text']; ?></option>
@@ -116,18 +116,22 @@
                   <?php foreach ($product['attribute_groups'] as $attribute_group) { ?>
                   <tbody>
                     <?php foreach ($attribute_group['attribute'] as $attribute) { ?>
-                     <tr>
-                      <td><?php echo $attribute['name']; ?></td>
+                    <tr>
+                      <?php if ($attribute['name'] == 'Sale Price') { ?>
+                        <td><font style="color:red"><b><?php echo $attribute['name']; ?><b></font></td>
+                      <?php } else { ?>
+                        <td><b><?php echo $attribute['name']; ?><b></td>
+                      <?php } ?> 
                       <?php if ($attribute['name'] == 'Retail Price') { ?>
                         <td><b><span style="text-decoration: line-through;"><?php echo $attribute['text']; ?></span></b></td>
                       <?php } elseif ($attribute['name'] == 'Sale Price') { ?>
                         <?php if ($product['stock_status'] == 'In Stock') { ?>
-                           <td><b><?php echo $attribute['text']; ?></b></td>
+                           <td><font style="color:red"><b><?php echo $attribute['text']; ?></b></font></td>
                         <?php } else { ?>
-                           <td><b>On Hold</b></td>
+                           <td>On Hold</td>
                         <?php } ?>
                       <?php } else { ?>
-                        <td><b><?php echo $attribute['text']; ?></b></td>
+                        <td><?php echo $attribute['text']; ?></td>
                       <?php } ?>
                     </tr>
                     <?php } ?>

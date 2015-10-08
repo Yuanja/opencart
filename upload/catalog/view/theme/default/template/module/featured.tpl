@@ -6,27 +6,31 @@
       <div class="image"><img src="<?php echo $product['thumb']; ?>" alt="<?php echo $product['name']; ?>" title="<?php echo $product['name']; ?>" class="img-responsive" /></div>
          <div class="caption">
              <h4><?php echo $product['name']; ?></h4>
-             <table >
-               <?php foreach ($product['attribute_groups'] as $attribute_group) { ?>
-               <tbody>
-                 <?php foreach ($attribute_group['attribute'] as $attribute) { ?>
-                 <tr>
-                   <td><?php echo $attribute['name']; ?></td>
-                   <?php if ($attribute['name'] == 'Retail Price') { ?>
-                     <td><b><span style="text-decoration: line-through;"><?php echo $attribute['text']; ?></span></b></td>
-                   <?php } elseif ($attribute['name'] == 'Sale Price') { ?>
-                     <?php if ($product['stock_status'] == 'In Stock') { ?>
-                        <td><b><?php echo $attribute['text']; ?></b></td>
-                     <?php } else { ?>
-                        <td><b>On Hold</b></td>
-                     <?php } ?>
-                   <?php } else { ?>
-                     <td><b><?php echo $attribute['text']; ?></b></td>
-                   <?php } ?>
-                 </tr>
-                 <?php } ?>
-               </tbody>
-               <?php } ?>               
+                <table >
+                  <?php foreach ($product['attribute_groups'] as $attribute_group) { ?>
+                  <tbody>
+                    <?php foreach ($attribute_group['attribute'] as $attribute) { ?>
+                    <tr>
+                      <?php if ($attribute['name'] == 'Sale Price') { ?>
+                        <td><font style="color:red"><b><?php echo $attribute['name']; ?><b></font></td>
+                      <?php } else { ?>
+                        <td><b><?php echo $attribute['name']; ?><b></td>
+                      <?php } ?> 
+                      <?php if ($attribute['name'] == 'Retail Price') { ?>
+                        <td><b><span style="text-decoration: line-through;"><?php echo $attribute['text']; ?></span></b></td>
+                      <?php } elseif ($attribute['name'] == 'Sale Price') { ?>
+                        <?php if ($product['stock_status'] == 'In Stock') { ?>
+                           <td><font style="color:red"><b><?php echo $attribute['text']; ?></b></font></td>
+                        <?php } else { ?>
+                           <td>On Hold</td>
+                        <?php } ?>
+                      <?php } else { ?>
+                        <td><?php echo $attribute['text']; ?></td>
+                      <?php } ?>
+                    </tr>
+                    <?php } ?>
+                  </tbody>
+                  <?php } ?>              
                
                <tr><td colspan=2>
                <div id="floatingenquire<?php echo $product['product_id']; ?>"> 
