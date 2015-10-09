@@ -95,7 +95,7 @@ class ControllerCatalogRefresh extends Controller {
 						'timeout' => 1200,  //1200 Seconds is 20 Minutes
 				)
 		));
-		$this->url_get_contents('/tmp/tmpout.xml', FEED_URL);
+   	$this->url_get_contents('/tmp/tmpout.xml', FEED_URL);
 		$xml = simplexml_load_file('/tmp/tmpout.xml');
 		$recordValueRegArray = $this->getRecordValueRegArray($xml);
 		//The feed can fuck up so add safe guard to not accidently delete or change 
@@ -207,16 +207,13 @@ class ControllerCatalogRefresh extends Controller {
 				$image1Url = $changedRecordReg->get($imageElement);
 				$imageFilePath = DOWNLOAD_DIR."/".$imageName;
 				$this->echoFlush("Downloading images from: ".$image1Url."...");
-				
 				$this->url_get_contents($imageFilePath, $image1Url);
-				
 				$this->echoFlush("Success! Image url for product: ".$imageOutUrlPath."...");
+				return array('image' => $imageOutUrlPath, 'sort_order' => '0');
 			} catch (ErrorException $e){
 				$this->echoFlush("FAILED to download images from: ".$image1Url."... .".$e->getTraceAsString());
-				$imageOutUrlPath = "no_image.png";
+				return NULL;
 			}
-				
-			return array('image' => $imageOutUrlPath, 'sort_order' => '0');
 		} else {
 			return NULL;
 		}
@@ -638,6 +635,15 @@ class ControllerCatalogRefresh extends Controller {
 		
 		if (strcmp($recordReg->get('web_watch_model'), (string)$product_model)){
 			return true;
+		}
+		
+		//Detect if images are off
+		if($recordReg->get('web_image_path_1')){
+			$imagesFromDB = $this->model_catalog_product->getProductImages($product['product_id']);
+			//Current we only have one image so take the top one.
+			if (!isset($imagesFromDB) || sizeof($imagesFromDB) == 0){
+				return true;
+			}
 		}
 		
 		return false;
