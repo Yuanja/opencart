@@ -36,7 +36,8 @@ class ControllerModuleFeatured extends Controller {
 				'sort'               => 'p.sku',
 				'order'              => 'DESC',
 				'start'              => ($page - 1) * $limit,
-				'limit'              => $limit
+				'limit'              => $limit,
+				'optimized'	=> '1'
 		);
 		
 		$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
