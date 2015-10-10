@@ -1,6 +1,13 @@
 <?php
 class ControllerModuleFeatured extends Controller {
+	//Customized feature page to make it paginate and always read the top 75 most recently added sku.
+	
 	public function index($setting) {
+		$url = '';
+		if (isset($this->request->get['page'])) {
+			$url .= '&page=' . $this->request->get['page'];
+		}
+		
 		$this->load->language('module/featured');
 
 		$data['heading_title'] = $this->language->get('heading_title');
@@ -17,16 +24,40 @@ class ControllerModuleFeatured extends Controller {
 
 		$data['products'] = array();
 
-		if (!$setting['limit']) {
-			$setting['limit'] = 4;
+		if (isset($this->request->get['page'])) {
+			$page = $this->request->get['page'];
+		} else {
+			$page = 1;
 		}
+		
+		$limit = 75; //Per Justin's request.
+		
+		$filter_data = array(
+				'sort'               => 'p.sku',
+				'order'              => 'DESC',
+				'start'              => ($page - 1) * $limit,
+				'limit'              => $limit
+		);
+		
+		$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
+		$products = $this->model_catalog_product->getProducts($filter_data);
 
-		if (!empty($setting['product'])) {
-			$products = array_slice($setting['product'], 0, (int)$setting['limit']);
+		$pagination = new Pagination();
+		$pagination->total = $product_total;
+		$pagination->page = $page;
+		$pagination->limit = $limit;
+		$pagination->url = $this->url->link('', '&page={page}');
+		$pagination->num_links = 7;
 
-			foreach ($products as $product_id) {
-				$product_info = $this->model_catalog_product->getProduct($product_id);
+		$data['pagination'] = $pagination->render();
+		
+		$data['results'] = sprintf($this->language->get('text_pagination'), ($product_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($product_total - $limit)) ? $product_total : ((($page - 1) * $limit) + $limit), $product_total, ceil($product_total / $limit));
+		
+		if (!empty($products)) {
 
+			foreach ($products as $product_info) {
+				//$product_info = $this->model_catalog_product->getProduct($product_id);
+				
 				if ($product_info) {
 					if ($product_info['image']) {
 						$image = $this->model_tool_image->resize($product_info['image'], $setting['width'], $setting['height']);
@@ -58,7 +89,7 @@ class ControllerModuleFeatured extends Controller {
 						$rating = false;
 					}
 					
-					$attribute_groups = $this->model_catalog_product->getProductAttributes($product_id);
+					$attribute_groups = $this->model_catalog_product->getProductAttributes($product_info['product_id']);
 					$data['enquire_link'] = $this->url->link('information/contact');
 					$data['customer'] = $this->customer;
 
