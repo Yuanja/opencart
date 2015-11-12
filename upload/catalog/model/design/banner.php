@@ -5,4 +5,14 @@ class ModelDesignBanner extends Model {
 
 		return $query->rows;
 	}
+	
+	public function getEmailBanner() {
+		$query = $this->db->query(
+				"SELECT * FROM " . DB_PREFIX . "banner b JOIN ".DB_PREFIX ."banner_image bi " 
+				." ON (b.banner_id = bi.banner_id ) "
+				." WHERE bi.banner_name = 'email special'"
+				." ORDER BY bi.sort_order ");
+	
+		return $query->rows;
+	}
 }
