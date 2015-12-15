@@ -50,6 +50,9 @@
       <ul class="list-inline">
         <li><a href="<?php echo $contact; ?>"><span style="font-size: large; color:white; text-shadow: 0 0 0 black;">CALL US <?php echo $telephone; ?></span></a></li>
       </ul>
+      <ul class="list-inline">
+        <li><a href="mailto:sales@gruenbergwatches.com"><span style="font-size: large; color:white; text-shadow: 0 0 0 black;">sales@gruenbergwatches.com</span></a></li>
+      </ul>
     </div>
 <!-- 
     <div id="top-links" class="nav pull-right">
