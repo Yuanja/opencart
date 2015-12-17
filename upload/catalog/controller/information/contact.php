@@ -55,6 +55,7 @@ class ControllerInformationContact extends Controller {
 
 			$mail->setTo($this->config->get('config_email'));
 			$mail->setFrom($email);
+			$mail->setReplyTo($email);
 			$mail->setSender($senderName);
 			$mail->setSubject($emailSubject);
 			$mail->setText($emailBody);
