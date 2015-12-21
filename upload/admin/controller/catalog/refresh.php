@@ -473,7 +473,7 @@ class ControllerCatalogRefresh extends Controller {
 		$this->db->query("INSERT INTO " . DB_PREFIX . "product_description SET product_id = '" . $product_id ."', "
 				. "language_id = '1', "
 				. "name ='". $this->db->escape($this->getNonNullString($changedRecordReg->get("web_description_short"))) . "', "
-				. "description = '".$this->db->escape($this->getNonNullString($changedRecordReg->get("web_description_short")))."', "
+				. "description = '".$this->db->escape($this->getNonNullString($changedRecordReg->get("web_description_long")))."', "
 				. "tag = '', meta_title = '".$this->db->escape($this->getNonNullString($changedRecordReg->get("web_description_short")))."', meta_description = '', meta_keyword = ''"
 				);
 		
@@ -621,6 +621,9 @@ class ControllerCatalogRefresh extends Controller {
 		if ($product_descs){
 			$product_desc = $product_descs[1];
 			if (strcmp($product_desc['name'], $recordReg->get('web_description_short'))){
+				return true;
+			}
+			if (strcmp($product_desc['description'], $recordReg->get('web_description_long'))){
 				return true;
 			}
 		}
