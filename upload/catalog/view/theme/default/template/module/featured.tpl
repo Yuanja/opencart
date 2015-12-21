@@ -29,8 +29,15 @@
                       <?php } ?>
                     </tr>
                     <?php } ?>
+                    <?php if (isset($product['description']) && !empty($product['description'])) { ?>
+                       <tr>
+                         <td style="vertical-align: top"><b>Notes<b></td>
+                         <td><?php echo $product['description']; ?></td>
+                       </tr>
+                    <?php } ?>
                   </tbody>
-                  <?php } ?>              
+                  <?php } ?>  
+                     
                
                <tr><td colspan=2>
                <div id="floatingenquire<?php echo $product['product_id']; ?>"> 
