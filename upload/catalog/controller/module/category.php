@@ -1,5 +1,6 @@
 <?php
 class ControllerModuleCategory extends Controller {
+
 	public function index() {
 		$this->load->language('module/category');
 
@@ -36,6 +37,11 @@ class ControllerModuleCategory extends Controller {
 		$data['categories'] = array();
 
 		$categories = $this->model_catalog_category->getCategories(0);
+		
+		//Used to sort categories by name field.
+		usort($categories, function ($category1, $category2){
+			return strcmp($category1["name"], $category2["name"]);
+		});
 
 		foreach ($categories as $category) {
 			$children_data = array();
@@ -80,7 +86,7 @@ class ControllerModuleCategory extends Controller {
 				'href'        => $this->url->link('product/category', 'path=' . $category['category_id'])
 			);
 		}
-
+		
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/module/category.tpl')) {
 			return $this->load->view($this->config->get('config_template') . '/template/module/category.tpl', $data);
 		} else {
