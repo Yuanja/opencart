@@ -1,7 +1,4 @@
 <?php
-
-define("DEFAULT_LOG", DIR_IMAGE."/inquires.log");
-
 class ControllerInformationContact extends Controller {
 	
 	private $error = array();
@@ -56,7 +53,7 @@ class ControllerInformationContact extends Controller {
 				$emailBody = $this->request->post['enquiry'];
 			}
 			
-			$logline = "FROM: " + $email +" SUBJECT: " +$emailSubject +" BODY: " +$emailBody;
+			$logline = "FROM: " . $email ." SUBJECT: " .$emailSubject ." BODY: " .$emailBody;
 			$this->write_log($logline);
 			
 			$mail->setTo($this->config->get('config_email'));
@@ -321,14 +318,12 @@ class ControllerInformationContact extends Controller {
 		// Determine log file
 		if($logfile == '') {
 			// checking if the constant for the log file is defined
-			if (defined(DEFAULT_LOG) == TRUE) {
-				$logfile = DEFAULT_LOG;
-			}
+			$logfile = DIR_LOGS."inquires.log";
+
 			// the constant is not defined and there is no log file given as input
-			else {
-				error_log('No log file defined!',0);
-				return array(status => false, message => 'No log file defined!');
-			}
+		}else {
+			error_log('No log file defined!',0);
+			return array(status => false, message => 'No log file defined!');
 		}
 	
 		// Get time of request
