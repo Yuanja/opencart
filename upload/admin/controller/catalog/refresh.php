@@ -377,14 +377,16 @@ class ControllerCatalogRefresh extends Controller {
 		//Nope, insert the bitch. and return the new id.
 		
 		//Override for sort_order
+		$showOnTopNav = 0;
 		$sortOrder = 100;
 		if (!isset($currentParentCategoryId) && array_key_exists($categoryName, $this->allowedTopCategoryNames)){
 			$sortOrder = $this->allowedTopCategoryNames[$categoryName];
+			$showOnTopNav = 1;
 		}
 		
 		$data = array(
 				'parent_id' => isset($currentParentCategoryId) ? $currentParentCategoryId : NULL,
-				'top' => !isset($currentParentCategoryId) ? 1 : 0,
+				'top' => $showOnTopNav,
 				'column' => '0',
 				'sort_order' => $sortOrder,
 				'status' => '1'
