@@ -606,6 +606,7 @@ class ControllerCatalogRefresh extends Controller {
 
 	private function hasChanged($product, $recordReg){
 		if (!$product){
+			$this->echoFlush("Changed record detected - new record: " . $recordReg->get('web_tag_number'));
 			return true;
 		}
 		
@@ -615,6 +616,7 @@ class ControllerCatalogRefresh extends Controller {
 		if (($web_status == "Available" && $product_stock_status != 7) ||
 			 ($web_status == "On Memo" && $product_stock_status != 8))
 		{
+			$this->echoFlush("Changed record detected - " . $recordReg->get('web_tag_number') . " has new status of " . $recordReg->get('web_status'));
 			return true;
 		}
 		
@@ -623,9 +625,11 @@ class ControllerCatalogRefresh extends Controller {
 		if ($product_descs){
 			$product_desc = $product_descs[1];
 			if (strcmp($product_desc['name'], $recordReg->get('web_description_short'))){
+				$this->echoFlush("Changed record detected - " . $recordReg->get('web_tag_number') . " has new name of " . $recordReg->get('web_description_short'));
 				return true;
 			}
 			if (strcmp($product_desc['description'], $recordReg->get('web_description_long'))){
+				$this->echoFlush("Changed record detected - " . $recordReg->get('web_tag_number') . " has new description of " . $recordReg->get('web_description_short'));
 				return true;
 			}
 		}
@@ -635,10 +639,12 @@ class ControllerCatalogRefresh extends Controller {
 		
 		//TODO: deeper comparison
 		if ((float)str_replace("$", "", $recordReg->get('web_price_sale')) != $product_price){
+			$this->echoFlush("Changed record detected - " . $recordReg->get('web_tag_number') . " has new web_price_sale of " . $recordReg->get('web_price_sale'));
 			return true;
 		}
 		
 		if (strcmp($recordReg->get('web_watch_model'), (string)$product_model)){
+			$this->echoFlush("Changed record detected - " . $recordReg->get('web_tag_number') . " has new web_watch_model of " . $recordReg->get('web_watch_model'));
 			return true;
 		}
 		
@@ -647,6 +653,7 @@ class ControllerCatalogRefresh extends Controller {
 			$imagesFromDB = $this->model_catalog_product->getProductImages($product['product_id']);
 			//Current we only have one image so take the top one.
 			if (!isset($imagesFromDB) || sizeof($imagesFromDB) == 0){
+				$this->echoFlush("Changed record detected - " . $recordReg->get('web_tag_number') . " has new web_image_path_1 of " . $recordReg->get('web_image_path_1'));
 				return true;
 			}
 		}
