@@ -95,16 +95,22 @@ class ControllerCatalogRefresh extends Controller {
 						'timeout' => 1200,  //1200 Seconds is 20 Minutes
 				)
 		));
-   	$this->url_get_contents('/tmp/tmpout.xml', FEED_URL);
+   		$this->url_get_contents('/tmp/tmpout.xml', FEED_URL);
 		$xml = simplexml_load_file('/tmp/tmpout.xml');
 		$recordValueRegArray = $this->getRecordValueRegArray($xml);
 		//The feed can fuck up so add safe guard to not accidently delete or change 
 		if (isset($recordValueRegArray) && sizeof($recordValueRegArray) > 0){
 			$changedRecordsRegArray = $this->getChangedRecordsArray($recordValueRegArray);
-			$this->saveChangedRecords($changedRecordsRegArray);
-			$this->deleteProductNotInFeed($recordValueRegArray);
-			//update featured/recently added
-			$this->updateFeaturedProducts();
+			//if the detected changes are too large, too many new records or too many changed records don't operate on it.
+			if (sizeof($changedRecordsRegArray) > 100 &&
+					!isset($this->request->get['clear'])){
+				$this->echoFlush("WARNING: Something wrong with the feed, too many changed items (over 100) and clear bit is not set.");
+			} else {
+				$this->saveChangedRecords($changedRecordsRegArray);
+				$this->deleteProductNotInFeed($recordValueRegArray);
+				//update featured/recently added
+				$this->updateFeaturedProducts();
+			}
 		} else {
 			$this->echoFlush("WARNING: Something wrong with the feed size! Nothing read!");
 		}
