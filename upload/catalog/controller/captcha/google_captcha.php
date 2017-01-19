@@ -1,5 +1,5 @@
 <?php
-class ControllerInformationContact extends Controller {
+class ControllerCaptchaGoogleCaptcha extends Controller {
     private $error = array();
 
     public function index() {
@@ -7,7 +7,7 @@ class ControllerInformationContact extends Controller {
 
 		$this->document->addScript('https://www.google.com/recaptcha/api.js');
 
-		$data['site_key'] = $this->config->get('config_google_captcha_public');
+		$data['site_key'] = $this->config->get('google_captcha_key');
     }
 
     public function validate() {

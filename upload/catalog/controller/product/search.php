@@ -428,6 +428,13 @@ class ControllerProductSearch extends Controller {
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 
+		if ($this->config->get('google_captcha_status')) {
+			$this->document->addScript('https://www.google.com/recaptcha/api.js');
+			$data['site_key'] = $this->config->get('google_captcha_key');
+		} else {
+			$data['site_key'] = '';
+		}
+		
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/product/search.tpl')) {
 			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/product/search.tpl', $data));
 		} else {

@@ -111,6 +111,13 @@ class ControllerModuleFeatured extends Controller {
 				}
 			}
 		}
+		
+		if ($this->config->get('google_captcha_status')) {
+			$this->document->addScript('https://www.google.com/recaptcha/api.js');
+			$data['site_key'] = $this->config->get('google_captcha_key');
+		} else {
+			$data['site_key'] = '';
+		}
 
 		if ($data['products']) {
 			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/module/featured.tpl')) {

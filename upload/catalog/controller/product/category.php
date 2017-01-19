@@ -342,7 +342,14 @@ class ControllerProductCategory extends Controller {
 			$data['content_bottom'] = $this->load->controller('common/content_bottom');
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
-
+			
+			if ($this->config->get('google_captcha_status')) {
+				$this->document->addScript('https://www.google.com/recaptcha/api.js');
+				$data['site_key'] = $this->config->get('google_captcha_key');
+			} else {
+				$data['site_key'] = '';
+			}
+			
 			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/product/category.tpl')) {
 				$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/product/category.tpl', $data));
 			} else {

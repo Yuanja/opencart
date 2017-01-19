@@ -157,6 +157,7 @@
                         <tr> <td valign="top"> <input type="text" name="email"/></td> </tr>
                         <tr> <td valign="top"> <label for="comments">Message *</label> </td> </tr>
                         <tr> <td valign="top"> <textarea name="enquiry" maxlength="1000" cols="25" rows="6"></textarea> </td> </tr> 
+                        <tr> <td valign="top"><div class="g-recaptcha" data-sitekey="<?php echo $site_key; ?>"></div> </tr>
                         <tr> <td colspan="2" style="text-align:center"> <input type="submit" value="Submit"> </td> </tr> 
                      </table>
                      <input type="hidden" name="product_name" value="<?php echo $product['name'] ?>"/>
