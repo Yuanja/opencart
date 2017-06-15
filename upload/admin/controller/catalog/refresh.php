@@ -102,7 +102,7 @@ class ControllerCatalogRefresh extends Controller {
 		if (isset($recordValueRegArray) && sizeof($recordValueRegArray) > 0){
 			$changedRecordsRegArray = $this->getChangedRecordsArray($recordValueRegArray);
 			//if the detected changes are too large, too many new records or too many changed records don't operate on it.
-			if (sizeof($changedRecordsRegArray) > 100 &&
+			if (sizeof($changedRecordsRegArray) > 300 &&
 					!isset($this->request->get['clear'])){
 				$this->echoFlush("WARNING: Something wrong with the feed, too many changed items (over 100) and clear bit is not set.");
 			} else {
