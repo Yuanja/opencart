@@ -101,18 +101,12 @@ class ControllerCatalogRefresh extends Controller {
 		//The feed can fuck up so add safe guard to not accidently delete or change 
 		if (isset($recordValueRegArray) && sizeof($recordValueRegArray) > 0){
 			$changedRecordsRegArray = $this->getChangedRecordsArray($recordValueRegArray);
-			//if the detected changes are too large, too many new records or too many changed records don't operate on it.
-			if (sizeof($changedRecordsRegArray) > 300 &&
-					!isset($this->request->get['clear'])){
-				$this->echoFlush("WARNING: Something wrong with the feed, too many changed items (over 100) and clear bit is not set.");
-			} else {
-				$this->saveChangedRecords($changedRecordsRegArray);
-				$this->deleteProductNotInFeed($recordValueRegArray);
-				//update featured/recently added
-				$this->updateFeaturedProducts();
-			}
+		 	$this->saveChangedRecords($changedRecordsRegArray);
+			$this->deleteProductNotInFeed($recordValueRegArray);
+			//update featured/recently added
+			$this->updateFeaturedProducts();
 		} else {
-			$this->echoFlush("WARNING: Something wrong with the feed size! Nothing read!");
+			$this->echoFlush("WARNING: Something is wrong with the feed size! Nothing read!");
 		}
 		$this->echoFlush("End processing!");
 	}
@@ -597,15 +591,18 @@ class ControllerCatalogRefresh extends Controller {
 		}
 		
 		$toDeleteSkuArray = array_diff($dbSkuArray, $feedSkuArray);
-		
-		foreach ($toDeleteSkuArray as $delProductSku){
-			$filter_data = array(
-					'filter_web_item_number'	  => $delProductSku,
-			);
-			$products = $this->model_catalog_product->getProducts($filter_data);
-			foreach ($products as $productToDelete){
-				$this->echoFlush("Deleting product id: ".$productToDelete['product_id']." sku: ".$delProductSku);
-				$this->model_catalog_product->deleteProduct($productToDelete['product_id']);
+		if (sizeof($toDeleteSkuArray) > 100 && !isset($this->request->get['clear'])){
+			$this->echoFlush("WARNING: Products to delete is too large.  Something is wrong with this feed. Skip deleting unless required.");
+		} else {
+			foreach ($toDeleteSkuArray as $delProductSku){
+				$filter_data = array(
+					'filter_web_item_number' => $delProductSku,
+				);
+				$products = $this->model_catalog_product->getProducts($filter_data);
+				foreach ($products as $productToDelete){
+					$this->echoFlush("Deleting product id: ".$productToDelete['product_id']." sku: ".$delProductSku);
+					$this->model_catalog_product->deleteProduct($productToDelete['product_id']);
+				}
 			}
 		}
 	}
