@@ -1,7 +1,7 @@
 <?php
 define("CATEGORY_DELIMETER", "&nbsp;&nbsp;&gt;&nbsp;&nbsp;");
 define("WATCH_ATTRIBUTE_GROUP", "Watch attributes");
-define("SOURCE_IP", "107.197.220.126");
+define("SOURCE_IP", "172.91.140.131");
 define("IMAGE_URL_BASE", "catalog/watches");
 define("DOWNLOAD_DIR", DIR_IMAGE.IMAGE_URL_BASE);
 define("FEED_URL", "https://".SOURCE_IP."/fmi/xml/fmresultset.xml?-db=DEG&-lay=WEB_XML&-find&web_flag=1");
@@ -87,7 +87,7 @@ class ControllerCatalogRefresh extends Controller {
 	}
 	
 	public function readFromFeed() {
-		$this->echoFlush("Reading from source...<br>");
+		$this->echoFlush("Reading from source at: ".FEED_URL."<br>");
 		
 		//Set timeout to 20min
 		$ctx = stream_context_create(array('http'=>
