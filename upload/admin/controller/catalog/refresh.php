@@ -4,7 +4,7 @@ define("WATCH_ATTRIBUTE_GROUP", "Watch attributes");
 define("SOURCE_IP", "107.197.220.126");
 define("IMAGE_URL_BASE", "catalog/watches");
 define("DOWNLOAD_DIR", DIR_IMAGE.IMAGE_URL_BASE);
-define("FEED_URL", "https://".SOURCE_IP."/fmi/xml/fmresultset.xml?-db=DEG&-lay=WEB_XML&-find&web_flag__c.op=eq&web_flag__c=1");
+define("FEED_URL", "https://".SOURCE_IP."/fmi/xml/fmresultset.xml?-db=DEG&-lay=WEB_XML&-find&web_flag=1");
 
 class ControllerCatalogRefresh extends Controller {
 	
