@@ -211,6 +211,7 @@ class ControllerCatalogRefresh extends Controller {
 			
 			try{
 				$image1Url = $changedRecordReg->get($imageElement);
+				$image1Ulr = str_replace("107.197.220.126", SOURCE_IP, $image1Ulr);
 				$imageFilePath = DOWNLOAD_DIR."/".$imageName;
 				$this->echoFlush("Downloading images from: ".$image1Url."...");
 				$this->url_get_contents($imageFilePath, $image1Url);
