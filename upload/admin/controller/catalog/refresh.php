@@ -208,10 +208,10 @@ class ControllerCatalogRefresh extends Controller {
 			$imageName = $changedRecordReg->get('web_tag_number').".jpg";
 				
 			$imageOutUrlPath = IMAGE_URL_BASE."/".$imageName;;
+			$image1Url = $changedRecordReg->get($imageElement);
+			$finalImageUrl = str_replace("107.197.220.126", SOURCE_IP, $image1Ulr);
 			
-			try{
-				$image1Url = $changedRecordReg->get($imageElement);
-				$finalImageUrl = str_replace("107.197.220.126", SOURCE_IP, $image1Ulr);
+			try{	
 				$imageFilePath = DOWNLOAD_DIR."/".$imageName;
 				$this->echoFlush("Downloading images from: ".$finalImageUrl."...");
 				$this->url_get_contents($imageFilePath, $finalImageUrl);
