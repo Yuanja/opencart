@@ -599,14 +599,18 @@ class ControllerCatalogRefresh extends Controller {
 		
 		$toDeleteSkuArray = array_diff($dbSkuArray, $feedSkuArray);
 		
-		foreach ($toDeleteSkuArray as $delProductSku){
-			$filter_data = array(
-					'filter_web_item_number'	  => $delProductSku,
-			);
-			$products = $this->model_catalog_product->getProducts($filter_data);
-			foreach ($products as $productToDelete){
-				$this->echoFlush("Deleting product id: ".$productToDelete['product_id']." sku: ".$delProductSku);
-				$this->model_catalog_product->deleteProduct($productToDelete['product_id']);
+		if (sizeof($toDeleteSkuArray) > 100){
+			$this->echoFlush("More than 100 items marked deleted. Way too many.  Skipping the delete process.");
+		} else {
+			foreach ($toDeleteSkuArray as $delProductSku){
+				$filter_data = array(
+						'filter_web_item_number'	  => $delProductSku,
+				);
+				$products = $this->model_catalog_product->getProducts($filter_data);
+				foreach ($products as $productToDelete){
+					$this->echoFlush("Deleting product id: ".$productToDelete['product_id']." sku: ".$delProductSku);
+					$this->model_catalog_product->deleteProduct($productToDelete['product_id']);
+				}
 			}
 		}
 	}
