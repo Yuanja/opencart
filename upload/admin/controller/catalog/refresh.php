@@ -655,16 +655,6 @@ class ControllerCatalogRefresh extends Controller {
 			return true;
 		}
 		
-		//Detect if images are off
-		if($recordReg->get('web_image_path_1')){
-			$imagesFromDB = $this->model_catalog_product->getProductImages($product['product_id']);
-			//Current we only have one image so take the top one.
-			if (!isset($imagesFromDB) || sizeof($imagesFromDB) == 0){
-				$this->echoFlush("Changed record detected - " . $recordReg->get('web_tag_number') . " has new web_image_path_1 of " . $recordReg->get('web_image_path_1'));
-				return true;
-			}
-		}
-		
 		return false;
 	}
 	
