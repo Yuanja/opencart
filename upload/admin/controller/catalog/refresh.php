@@ -211,14 +211,14 @@ class ControllerCatalogRefresh extends Controller {
 			
 			try{
 				$image1Url = $changedRecordReg->get($imageElement);
-				$image1Ulr = str_replace("107.197.220.126", SOURCE_IP, $image1Ulr);
+				$finalImageUrl = str_replace("107.197.220.126", SOURCE_IP, $image1Ulr);
 				$imageFilePath = DOWNLOAD_DIR."/".$imageName;
-				$this->echoFlush("Downloading images from: ".$image1Url."...");
-				$this->url_get_contents($imageFilePath, $image1Url);
+				$this->echoFlush("Downloading images from: ".$finalImageUrl."...");
+				$this->url_get_contents($imageFilePath, $finalImageUrl);
 				$this->echoFlush("Success! Image url for product: ".$imageOutUrlPath."...");
 				return array('image' => $imageOutUrlPath, 'sort_order' => '0');
 			} catch (ErrorException $e){
-				$this->echoFlush("FAILED to download images from: ".$image1Url."... .".$e->getTraceAsString());
+				$this->echoFlush("FAILED to download images from: ".$finalImageUrl."... .".$e->getTraceAsString());
 				return NULL;
 			}
 		} else {
