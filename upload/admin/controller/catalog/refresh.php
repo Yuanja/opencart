@@ -177,6 +177,7 @@ class ControllerCatalogRefresh extends Controller {
 		foreach($changedRecordsRegArray as $changedRecordReg){
 			$allCategoryIds = $this->getAllUniqueCategoryIds($changedRecordReg);
 			$allProductAttributes = $this->ensureAttributesAndGroups($changedRecordReg);
+
 			$allProductImages = $this->ensureImages($changedRecordReg);
 			$current_product = $changedRecordReg->get('current_product');
 			if($current_product){
@@ -202,15 +203,14 @@ class ControllerCatalogRefresh extends Controller {
 	}
 	
 	private function downloadImage($imageElement, $changedRecordReg){
+                $this->echoFlush("Saving image for: ".$changedRecordReg->get('web_tag_number'));
 		//get the pics.
 		if (!empty($changedRecordReg->get($imageElement))){
 			//Figure out the image name
 			$imageName = $changedRecordReg->get('web_tag_number').".jpg";
-				
-			$imageOutUrlPath = IMAGE_URL_BASE."/".$imageName;;
+			$imageOutUrlPath = IMAGE_URL_BASE."/".$imageName;
 			$image1Url = $changedRecordReg->get($imageElement);
-			$finalImageUrl = str_replace("107.197.220.126", SOURCE_IP, $image1Ulr);
-			
+			$finalImageUrl = str_replace("107.197.220.126", SOURCE_IP, $image1Url);
 			try{	
 				$imageFilePath = DOWNLOAD_DIR."/".$imageName;
 				$this->echoFlush("Downloading images from: ".$finalImageUrl."...");
