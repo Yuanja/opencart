@@ -177,6 +177,7 @@ class ControllerCatalogRefresh extends Controller {
 		foreach($changedRecordsRegArray as $changedRecordReg){
 			$allCategoryIds = $this->getAllUniqueCategoryIds($changedRecordReg);
 			$allProductAttributes = $this->ensureAttributesAndGroups($changedRecordReg);
+
 			$allProductImages = $this->ensureImages($changedRecordReg);
 			$current_product = $changedRecordReg->get('current_product');
 			if($current_product){
@@ -202,12 +203,12 @@ class ControllerCatalogRefresh extends Controller {
 	}
 	
 	private function downloadImage($imageElement, $changedRecordReg){
+                $this->echoFlush("Saving image for: ".$changedRecordReg->get('web_tag_number'));
 		//get the pics.
 		if (!empty($changedRecordReg->get($imageElement))){
 			//Figure out the image name
-			$imageName = $changedRecordReg->get('web_tag_number').".jpg";
-				
-			$imageOutUrlPath = IMAGE_URL_BASE."/".$imageName;;
+			$imageName = $changedRecordReg->get('web_tag_number').".jpg";	
+			$imageOutUrlPath = IMAGE_URL_BASE."/".$imageName;
 			$image1Url = $changedRecordReg->get($imageElement);
 			$ipPattern = "/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/";
 			$correctedImageUrl = preg_replace($ipPattern, SOURCE_IP, $image1Url);
@@ -600,14 +601,18 @@ class ControllerCatalogRefresh extends Controller {
 		
 		$toDeleteSkuArray = array_diff($dbSkuArray, $feedSkuArray);
 		
-		foreach ($toDeleteSkuArray as $delProductSku){
-			$filter_data = array(
-					'filter_web_item_number'	  => $delProductSku,
-			);
-			$products = $this->model_catalog_product->getProducts($filter_data);
-			foreach ($products as $productToDelete){
-				$this->echoFlush("Deleting product id: ".$productToDelete['product_id']." sku: ".$delProductSku);
-				$this->model_catalog_product->deleteProduct($productToDelete['product_id']);
+		if (sizeof($toDeleteSkuArray) > 100){
+			$this->echoFlush("More than 100 items marked deleted. Way too many.  Skipping the delete process.");
+		} else {
+			foreach ($toDeleteSkuArray as $delProductSku){
+				$filter_data = array(
+						'filter_web_item_number'	  => $delProductSku,
+				);
+				$products = $this->model_catalog_product->getProducts($filter_data);
+				foreach ($products as $productToDelete){
+					$this->echoFlush("Deleting product id: ".$productToDelete['product_id']." sku: ".$delProductSku);
+					$this->model_catalog_product->deleteProduct($productToDelete['product_id']);
+				}
 			}
 		}
 	}
@@ -654,16 +659,6 @@ class ControllerCatalogRefresh extends Controller {
 		if (strcmp($recordReg->get('web_watch_model'), (string)$product_model)){
 			$this->echoFlush("Changed record detected - " . $recordReg->get('web_tag_number') . " has new web_watch_model of " . $recordReg->get('web_watch_model'));
 			return true;
-		}
-		
-		//Detect if images are off
-		if($recordReg->get('web_image_path_1')){
-			$imagesFromDB = $this->model_catalog_product->getProductImages($product['product_id']);
-			//Current we only have one image so take the top one.
-			if (!isset($imagesFromDB) || sizeof($imagesFromDB) == 0){
-				$this->echoFlush("Changed record detected - " . $recordReg->get('web_tag_number') . " has new web_image_path_1 of " . $recordReg->get('web_image_path_1'));
-				return true;
-			}
 		}
 		
 		return false;
