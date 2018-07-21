@@ -1,7 +1,7 @@
 <?php
 define("CATEGORY_DELIMETER", "&nbsp;&nbsp;&gt;&nbsp;&nbsp;");
 define("WATCH_ATTRIBUTE_GROUP", "Watch attributes");
-define("SOURCE_IP", "172.91.140.131");
+define("SOURCE_IP", "172.91.134.169");
 define("IMAGE_URL_BASE", "catalog/watches");
 define("DOWNLOAD_DIR", DIR_IMAGE.IMAGE_URL_BASE);
 define("FEED_URL", "https://".SOURCE_IP."/fmi/xml/fmresultset.xml?-db=DEG&-lay=WEB_XML&-find&web_flag=1");
@@ -208,16 +208,18 @@ class ControllerCatalogRefresh extends Controller {
 			$imageName = $changedRecordReg->get('web_tag_number').".jpg";
 				
 			$imageOutUrlPath = IMAGE_URL_BASE."/".$imageName;;
+			$image1Url = $changedRecordReg->get($imageElement);
+			$ipPattern = "/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/";
+			$correctedImageUrl = preg_replace($ipPattern, SOURCE_IP, $image1Url);
+			$imageFilePath = DOWNLOAD_DIR."/".$imageName;
+			$this->echoFlush("Downloading images from: ".$correctedImageUrl."...");
 			
 			try{
-				$image1Url = $changedRecordReg->get($imageElement);
-				$imageFilePath = DOWNLOAD_DIR."/".$imageName;
-				$this->echoFlush("Downloading images from: ".$image1Url."...");
-				$this->url_get_contents($imageFilePath, $image1Url);
+				$this->url_get_contents($imageFilePath, $correctedImageUrl);
 				$this->echoFlush("Success! Image url for product: ".$imageOutUrlPath."...");
 				return array('image' => $imageOutUrlPath, 'sort_order' => '0');
 			} catch (ErrorException $e){
-				$this->echoFlush("FAILED to download images from: ".$image1Url."... .".$e->getTraceAsString());
+				$this->echoFlush("FAILED to download images from: ".$correctedImageUrl."... .".$e->getTraceAsString());
 				return NULL;
 			}
 		} else {
